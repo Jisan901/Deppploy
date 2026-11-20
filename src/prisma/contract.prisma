@@ -5,17 +5,55 @@ model User {
   email     String             @unique
   username  String?
   name      String?
-  posts     Post[]
+  password  String
+  role      String             @default("ADMIN")
   createdAt DateTime           @default(now()) @onCreate(now())
   updatedAt temporal.UpdatedAt
 }
 
-model Post {
-  id        Int                @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User               @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt DateTime           @default(now()) @onCreate(now())
-  updatedAt temporal.UpdatedAt
+model App {
+  id          Int                @id @default(autoincrement())
+  name        String
+  slug        String             @unique
+  description String?
+  secret      String             @unique
+  cwd         String
+  branch      String?            @default("main")
+  environment String?
+  isActive    Boolean            @default(true)
+  createdAt   DateTime           @default(now()) @onCreate(now())
+  updatedAt   temporal.UpdatedAt
+  actions     AppAction[]
+  deployments Deployment[]
+}
+
+model AppAction {
+  id          Int                @id @default(autoincrement())
+  name        String
+  command     String
+  description String?
+  timeoutSec  Int                @default(300)
+  app         App                @relation(fields: [appId], references: [id])
+  appId       Int
+  createdAt   DateTime           @default(now()) @onCreate(now())
+  updatedAt   temporal.UpdatedAt
+}
+
+model Deployment {
+  id          Int                @id @default(autoincrement())
+  actionName  String
+  command     String
+  status      String             @default("QUEUED")
+  exitCode    Int?
+  stdout      String?
+  stderr      String?
+  triggeredBy String             @default("WEBHOOK")
+  triggerIp   String?
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  durationMs  Int?
+  metadata    String?
+  app         App                @relation(fields: [appId], references: [id])
+  appId       Int
+  createdAt   DateTime           @default(now()) @onCreate(now())
 }
