@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { Copy, Check, Terminal, Maximize2, Minimize2 } from 'lucide-react';
+import { Copy, Check, Terminal, Maximize2, Minimize2, FileCode } from 'lucide-react';
 
 export type SupportedLanguage = 'shell' | 'yaml' | 'json' | 'logs' | 'text';
 
@@ -15,11 +15,10 @@ interface CodeEditorProps {
   showLineNumbers?: boolean;
 }
 
-// Minimal High-Contrast Monochrome Syntax Highlighting Tokenizer
+// Authentic VS Code Dark+ (Default Dark Modern) Syntax Highlighting
 function highlightCode(code: string, language: SupportedLanguage): string {
   if (!code) return '';
 
-  // Escape HTML to prevent injection
   const escape = (str: string) =>
     str
       .replace(/&/g, '&amp;')
@@ -27,7 +26,7 @@ function highlightCode(code: string, language: SupportedLanguage): string {
       .replace(/>/g, '&gt;');
 
   if (language === 'text') {
-    return escape(code);
+    return `<span style="color: #d4d4d4;">${escape(code)}</span>`;
   }
 
   const lines = code.split('\n');
@@ -36,133 +35,168 @@ function highlightCode(code: string, language: SupportedLanguage): string {
     let escaped = escape(line);
 
     if (language === 'shell') {
-      // 1. Comments: #...
-      escaped = escaped.replace(/(#.*)$/, '<span class="text-neutral-500 italic">$1</span>');
+      // 1. Comments: #6a9955 (VS Code green italic)
+      escaped = escaped.replace(
+        /(#.*)$/,
+        '<span style="color: #6a9955; font-style: italic;">$1</span>',
+      );
 
-      // 2. Double and single quoted strings
+      // 2. Strings: #ce9178 (VS Code orange-brown)
       escaped = escaped.replace(
         /(&quot;.*?&quot;|&#39;.*?&#39;|".*?"|'.*?')/g,
-        '<span class="text-neutral-300 font-normal">$1</span>',
+        '<span style="color: #ce9178;">$1</span>',
       );
 
-      // 3. Environment variables: $VAR, ${VAR}
+      // 3. Environment Variables: #9cdcfe (VS Code light blue variable)
       escaped = escaped.replace(
         /(\$\{?[A-Za-z0-9_]+\}?)/g,
-        '<span class="text-white font-bold underline decoration-neutral-700 underline-offset-2">$1</span>',
+        '<span style="color: #9cdcfe; font-weight: 600;">$1</span>',
       );
 
-      // 4. Shell operators: &&, ||, |, ;, >, >>, <
-      escaped = escaped.replace(
-        /(&amp;&amp;|\|\||\||&gt;&gt;|&gt;|&lt;|;)/g,
-        '<span class="text-neutral-400 font-bold">$1</span>',
-      );
-
-      // 5. Common command verbs
-      escaped = escaped.replace(
-        /\b(git|pnpm|npm|yarn|pm2|docker|compose|node|curl|echo|export|cd|mkdir|rm|cp|mv|cat|grep|sed|awk|systemctl|exit|sh|bash)\b/g,
-        '<span class="text-white font-bold">$1</span>',
-      );
-
-      // 6. Command flags: --flag, -f
+      // 4. Command flags: #9cdcfe
       escaped = escaped.replace(
         /(\s)(--?[a-zA-Z0-9_-]+)/g,
-        '$1<span class="text-neutral-400 font-medium">$2</span>',
+        '$1<span style="color: #9cdcfe;">$2</span>',
+      );
+
+      // 5. Common CLI commands & functions: #dcdcaa (VS Code function yellow)
+      escaped = escaped.replace(
+        /\b(git|pnpm|npm|yarn|pm2|docker|compose|node|curl|echo|export|cd|mkdir|rm|cp|mv|cat|grep|sed|awk|systemctl|exit|sh|bash)\b/g,
+        '<span style="color: #dcdcaa; font-weight: 600;">$1</span>',
+      );
+
+      // 6. Keywords & operators: #569cd6 (VS Code blue keyword)
+      escaped = escaped.replace(
+        /\b(if|then|else|elif|fi|for|while|in|do|done|case|esac|return|function)\b/g,
+        '<span style="color: #569cd6; font-weight: 600;">$1</span>',
+      );
+
+      // 7. Operators: #d4d4d4
+      escaped = escaped.replace(
+        /(&amp;&amp;|\|\||\||&gt;&gt;|&gt;|&lt;|;)/g,
+        '<span style="color: #d4d4d4; font-weight: bold;">$1</span>',
       );
 
       return escaped;
     }
 
     if (language === 'yaml') {
-      // 1. Comments
-      escaped = escaped.replace(/(#.*)$/, '<span class="text-neutral-500 italic">$1</span>');
+      // 1. Comments: #6a9955
+      escaped = escaped.replace(
+        /(#.*)$/,
+        '<span style="color: #6a9955; font-style: italic;">$1</span>',
+      );
 
-      // 2. YAML Keys (e.g. name:, steps:, runs-on:)
+      // 2. YAML Keys: #9cdcfe (light blue)
       escaped = escaped.replace(
         /^(\s*)([a-zA-Z0-9_-]+)(:)/g,
-        '$1<span class="text-white font-bold">$2</span><span class="text-neutral-600">:</span>',
+        '$1<span style="color: #9cdcfe; font-weight: 600;">$2</span><span style="color: #d4d4d4;">:</span>',
       );
 
-      // 3. List dashes
-      escaped = escaped.replace(/^(\s*)(- )/g, '$1<span class="text-neutral-400 font-bold">$2</span>');
+      // 3. List dashes: #569cd6
+      escaped = escaped.replace(
+        /^(\s*)(- )/g,
+        '$1<span style="color: #569cd6; font-weight: bold;">$2</span>',
+      );
 
-      // 4. Strings
+      // 4. Strings: #ce9178
       escaped = escaped.replace(
         /(&quot;.*?&quot;|&#39;.*?&#39;|".*?"|'.*?')/g,
-        '<span class="text-neutral-300">$1</span>',
+        '<span style="color: #ce9178;">$1</span>',
       );
 
-      // 5. Booleans and numbers
+      // 5. Numbers: #b5cea8
       escaped = escaped.replace(
-        /\b(true|false|null|yes|no|\d+)\b/g,
-        '<span class="text-neutral-300 font-semibold">$1</span>',
+        /\b(\d+)\b/g,
+        '<span style="color: #b5cea8;">$1</span>',
+      );
+
+      // 6. Booleans & Null: #569cd6
+      escaped = escaped.replace(
+        /\b(true|false|null|yes|no)\b/g,
+        '<span style="color: #569cd6; font-weight: 600;">$1</span>',
       );
 
       return escaped;
     }
 
     if (language === 'json') {
-      // 1. JSON Keys: "key":
+      // 1. JSON Keys: #9cdcfe (VS Code property blue)
       escaped = escaped.replace(
         /(&quot;.*?&quot;|".*?")(?=\s*:)/g,
-        '<span class="text-white font-bold">$1</span>',
+        '<span style="color: #9cdcfe;">$1</span>',
       );
 
-      // 2. JSON String values
+      // 2. JSON String values: #ce9178 (orange)
       escaped = escaped.replace(
         /(:\s*)(&quot;.*?&quot;|".*?")/g,
-        '$1<span class="text-neutral-300">$2</span>',
+        '$1<span style="color: #ce9178;">$2</span>',
       );
 
-      // 3. Numbers, booleans, null
+      // 3. Numbers: #b5cea8 (green)
       escaped = escaped.replace(
-        /\b(-?\d+(?:\.\d+)?|true|false|null)\b/g,
-        '<span class="text-neutral-200 font-semibold">$1</span>',
+        /\b(-?\d+(?:\.\d+)?)\b/g,
+        '<span style="color: #b5cea8;">$1</span>',
       );
 
-      // 4. Brackets and braces
+      // 4. Booleans / null: #569cd6 (blue)
       escaped = escaped.replace(
-        /([{}[\],])/g,
-        '<span class="text-neutral-600">$1</span>',
+        /\b(true|false|null)\b/g,
+        '<span style="color: #569cd6; font-weight: 600;">$1</span>',
+      );
+
+      // 5. Brackets / braces: #ffd700 / #da70d6
+      escaped = escaped.replace(
+        /([{}])/g,
+        '<span style="color: #ffd700;">$1</span>',
+      );
+      escaped = escaped.replace(
+        /([[\],])/g,
+        '<span style="color: #da70d6;">$1</span>',
       );
 
       return escaped;
     }
 
     if (language === 'logs') {
-      // 1. Section headers: [STDOUT], [STDERR], [DEPPLOY]
+      // 1. Stream markers: [STDOUT], [STDERR], [DEPPLOY] -> #4ec9b0 / #569cd6
       escaped = escaped.replace(
-        /(\[STDOUT\]|\[STDERR\]|\[DEPPLOY.*?\])/gi,
-        '<span class="px-1.5 py-0.5 rounded bg-neutral-800 text-white font-bold uppercase text-[10px]">$1</span>',
+        /(\[STDOUT\]|\[DEPPLOY.*?\])/gi,
+        '<span style="color: #4ec9b0; font-weight: bold; background: rgba(78, 201, 176, 0.12); padding: 1px 4px; border-radius: 3px;">$1</span>',
+      );
+      escaped = escaped.replace(
+        /(\[STDERR\])/gi,
+        '<span style="color: #f48771; font-weight: bold; background: rgba(244, 135, 113, 0.15); padding: 1px 4px; border-radius: 3px;">$1</span>',
       );
 
-      // 2. Failure keywords: error, fatal, failed, exception
+      // 2. Failure keywords: #f48771 (VS Code red/salmon)
       escaped = escaped.replace(
         /\b(error|fatal|failed|failure|rejected|timed out|permission denied|exit code [1-9]\d*)\b/gi,
-        '<span class="px-1 py-0.2 rounded bg-neutral-900 border border-neutral-700 text-white font-bold uppercase text-[10px]">$1</span>',
+        '<span style="color: #f48771; font-weight: 600; text-decoration: underline decoration-dashed;">$1</span>',
       );
 
-      // 3. Success keywords: success, passed, ok, listening
+      // 3. Success keywords: #4ec9b0 (VS Code cyan/teal)
       escaped = escaped.replace(
         /\b(success|passed|ok|done|completed|listening|online)\b/gi,
-        '<span class="text-white font-bold underline decoration-white underline-offset-2">$1</span>',
+        '<span style="color: #4ec9b0; font-weight: 600;">$1</span>',
       );
 
-      // 4. ISO Timestamps
+      // 4. Timestamps: #858585
       escaped = escaped.replace(
         /(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)/g,
-        '<span class="text-neutral-500 font-mono text-[10px]">$1</span>',
+        '<span style="color: #858585;">$1</span>',
       );
 
-      // 5. Git commit hashes: 7 to 40 hex digits
+      // 5. Commit hashes / hex: #b5cea8
       escaped = escaped.replace(
         /\b([0-9a-f]{7,40})\b/g,
-        '<span class="text-neutral-400 underline decoration-neutral-800">$1</span>',
+        '<span style="color: #b5cea8;">$1</span>',
       );
 
       return escaped;
     }
 
-    return escaped;
+    return `<span style="color: #d4d4d4;">${escaped}</span>`;
   });
 
   return highlightedLines.join('\n');
@@ -181,12 +215,22 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ line: 1, col: 1 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const highlightOverlayRef = useRef<HTMLPreElement>(null);
 
   const lines = value ? value.split('\n') : [''];
   const lineCount = Math.max(lines.length, 1);
+
+  const updateCursorPos = (textarea: HTMLTextAreaElement) => {
+    const textToCursor = textarea.value.substring(0, textarea.selectionStart);
+    const lineList = textToCursor.split('\n');
+    setCursorPos({
+      line: lineList.length,
+      col: lineList[lineList.length - 1].length + 1,
+    });
+  };
 
   // Synchronize scroll between textarea, line numbers, and highlight overlay
   const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
@@ -202,7 +246,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     }
   };
 
-  // Support Tab key indentation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (readOnly) return;
     if (e.key === 'Tab') {
@@ -217,6 +260,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + indent.length;
+        updateCursorPos(textarea);
       }, 0);
     }
   };
@@ -233,40 +277,69 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       const parsed = JSON.parse(value);
       onChange(JSON.stringify(parsed, null, 2));
     } catch {
-      // invalid JSON, ignore
+      // invalid JSON
     }
   };
 
-  // Pre-generate highlighted HTML string
   const highlightedHtml = useMemo(() => {
     return highlightCode(value, language);
   }, [value, language]);
 
+  const getLanguageDisplay = () => {
+    switch (language) {
+      case 'shell':
+        return 'Shell Script (Bash)';
+      case 'yaml':
+        return 'YAML';
+      case 'json':
+        return 'JSON';
+      case 'logs':
+        return 'Log Stream';
+      default:
+        return 'Plain Text';
+    }
+  };
+
+  const getFileExtension = () => {
+    switch (language) {
+      case 'shell':
+        return '.sh';
+      case 'yaml':
+        return '.yml';
+      case 'json':
+        return '.json';
+      case 'logs':
+        return '.log';
+      default:
+        return '.txt';
+    }
+  };
+
   return (
     <div
-      className={`relative rounded-lg border border-neutral-800 bg-black font-mono transition-all overflow-hidden ${
-        isExpanded ? 'fixed inset-4 z-50 flex flex-col shadow-2xl' : 'w-full'
+      className={`relative rounded-md border border-[#333333] bg-[#1e1e1e] font-mono transition-all overflow-hidden shadow-lg ${
+        isExpanded ? 'fixed inset-4 z-50 flex flex-col' : 'w-full'
       }`}
     >
-      {/* Editor Header Toolbar */}
-      <div className="flex items-center justify-between px-3 py-1.5 border-b border-neutral-800 bg-neutral-950 text-[11px] text-neutral-400 select-none">
-        <div className="flex items-center gap-2">
-          <Terminal className="h-3.5 w-3.5 text-neutral-400" />
-          <span className="font-semibold text-white tracking-wide">{label || language.toUpperCase()}</span>
-          <span className="text-neutral-700">|</span>
-          <span className="text-neutral-500 font-mono text-[10px]">{language} mode</span>
-          <span className="text-neutral-700">·</span>
-          <span className="text-neutral-500 font-mono text-[10px]">{lineCount} {lineCount === 1 ? 'line' : 'lines'}</span>
+      {/* VS Code Titlebar & Tabs */}
+      <div className="flex items-center justify-between px-2 h-9 border-b border-[#2d2d2d] bg-[#252526] select-none">
+        {/* Active Tab */}
+        <div className="flex items-center">
+          <div className="flex items-center gap-2 px-3 py-1 bg-[#1e1e1e] border-t-2 border-[#007acc] text-xs text-[#cccccc] font-sans">
+            <FileCode className="h-3.5 w-3.5 text-[#569cd6]" />
+            <span className="font-medium text-white">{label || `script${getFileExtension()}`}</span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        {/* Toolbar actions */}
+        <div className="flex items-center gap-1.5 text-xs text-[#858585]">
           {language === 'json' && !readOnly && (
             <button
               type="button"
               onClick={formatJson}
-              className="px-2 py-0.5 rounded border border-neutral-800 text-[10px] text-neutral-300 hover:text-white hover:bg-neutral-900 transition"
+              className="px-2 py-0.5 rounded text-[11px] text-[#cccccc] hover:text-white hover:bg-[#333333] transition"
             >
-              Format JSON
+              Format
             </button>
           )}
 
@@ -274,36 +347,36 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             type="button"
             onClick={handleCopy}
             title="Copy code"
-            className="flex items-center gap-1 px-2 py-0.5 rounded border border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-[10px]"
+            className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] text-[#cccccc] hover:text-white hover:bg-[#333333] transition"
           >
-            {copied ? <Check className="h-3 w-3 text-white" /> : <Copy className="h-3 w-3" />}
+            {copied ? <Check className="h-3 w-3 text-[#4ec9b0]" /> : <Copy className="h-3 w-3" />}
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            title={isExpanded ? 'Collapse' : 'Expand editor'}
-            className="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-900 transition"
+            title={isExpanded ? 'Exit full screen' : 'Full screen'}
+            className="p-1 rounded text-[#cccccc] hover:text-white hover:bg-[#333333] transition"
           >
-            {isExpanded ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+            {isExpanded ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
           </button>
         </div>
       </div>
 
-      {/* Editor Main Canvas */}
+      {/* Editor Canvas */}
       <div
-        className={`relative flex flex-1 overflow-hidden ${isExpanded ? 'h-full' : ''}`}
+        className={`relative flex flex-1 overflow-hidden bg-[#1e1e1e] ${isExpanded ? 'h-full' : ''}`}
         style={{
           minHeight: isExpanded ? '100%' : minHeight,
           maxHeight: isExpanded ? 'none' : maxHeight,
         }}
       >
-        {/* Line Numbers Gutter */}
+        {/* VS Code Line Numbers Gutter */}
         {showLineNumbers && (
           <div
             ref={lineNumbersRef}
-            className="w-10 select-none border-r border-neutral-900 bg-neutral-950 py-3 text-right font-mono text-[11px] leading-5 text-neutral-600 overflow-hidden pr-2.5 shrink-0"
+            className="w-11 select-none border-r border-[#2d2d2d] bg-[#1e1e1e] py-3 text-right font-mono text-[12px] leading-5 text-[#858585] overflow-hidden pr-3 shrink-0"
             aria-hidden="true"
           >
             {Array.from({ length: lineCount }).map((_, i) => (
@@ -312,9 +385,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           </div>
         )}
 
-        {/* Highlight & Textarea Container */}
-        <div className="relative flex-1 overflow-hidden">
-          {/* Highlighted Render Layer */}
+        {/* Content Area */}
+        <div className="relative flex-1 overflow-hidden bg-[#1e1e1e]">
+          {/* Syntax Layer (Underneath) */}
           <pre
             ref={highlightOverlayRef}
             aria-hidden="true"
@@ -322,22 +395,43 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             dangerouslySetInnerHTML={{ __html: highlightedHtml + '\n' }}
           />
 
-          {/* Interactive Textarea Layer */}
+          {/* Textarea Input (On Top) */}
           <textarea
             ref={textareaRef}
             value={value}
             readOnly={readOnly}
-            onChange={(e) => onChange && onChange(e.target.value)}
+            onChange={(e) => {
+              if (onChange) onChange(e.target.value);
+              updateCursorPos(e.currentTarget);
+            }}
             onKeyDown={handleKeyDown}
+            onKeyUp={(e) => updateCursorPos(e.currentTarget)}
+            onClick={(e) => updateCursorPos(e.currentTarget)}
             onScroll={handleScroll}
             placeholder={placeholder}
             spellCheck={false}
-            className={`absolute inset-0 h-full w-full resize-none bg-transparent p-3 font-mono text-xs leading-5 whitespace-pre break-normal focus:outline-none selection:bg-neutral-800 selection:text-white ${
+            className={`absolute inset-0 h-full w-full resize-none bg-transparent p-3 font-mono text-xs leading-5 whitespace-pre break-normal focus:outline-none selection:bg-[#264f78] selection:text-white ${
               readOnly
                 ? 'text-transparent caret-transparent'
-                : 'text-transparent caret-white'
+                : 'text-transparent caret-[#ffffff]'
             }`}
           />
+        </div>
+      </div>
+
+      {/* VS Code Status Bar */}
+      <div className="flex items-center justify-between px-3 h-6 border-t border-[#2d2d2d] bg-[#007acc] text-[11px] text-white select-none font-sans">
+        <div className="flex items-center gap-3">
+          <span>{getLanguageDisplay()}</span>
+          <span>•</span>
+          <span>UTF-8</span>
+          <span>•</span>
+          <span>Spaces: 2</span>
+        </div>
+
+        <div className="flex items-center gap-3 font-mono">
+          <span>Ln {cursorPos.line}, Col {cursorPos.col}</span>
+          <span>({lineCount} {lineCount === 1 ? 'line' : 'lines'})</span>
         </div>
       </div>
     </div>
