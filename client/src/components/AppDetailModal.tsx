@@ -41,6 +41,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
   const [copiedWebhook, setCopiedWebhook] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [triggeringAction, setTriggeringAction] = useState<string | null>(null);
+  const [isClearingAppLogs, setIsClearingAppLogs] = useState(false);
 
   // New action form state
   const [showAddAction, setShowAddAction] = useState(false);
@@ -80,6 +81,21 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
       alert(err.message);
     } finally {
       setIsRegenerating(false);
+    }
+  };
+
+  const handleClearAppLogs = async () => {
+    if (!confirm(`Are you sure you want to permanently clear all execution logs for ${app.name}?`)) {
+      return;
+    }
+    setIsClearingAppLogs(true);
+    try {
+      await api.clearDeployments(app.id);
+      onReload();
+    } catch (err: any) {
+      alert(err.message || 'Failed to clear logs');
+    } finally {
+      setIsClearingAppLogs(false);
     }
   };
 
@@ -208,15 +224,18 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
 
         {/* Secret Token Banner */}
         <div className="px-6 py-2.5 bg-[#1f1f1f] border-b border-[#2d2d2d] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-2">
-            <KeyRound className="h-3.5 w-3.5 text-[#007acc]" />
-            <span className="text-[#858585]">SECRET:</span>
-            <span className="text-white bg-[#181818] px-2 py-0.5 rounded border border-[#333333]">
-              {showSecret ? app.secret : `••••••••••••••••••••${app.secret.slice(-6)}`}
+          <div className="flex items-center gap-2 max-w-full overflow-hidden">
+            <KeyRound className="h-3.5 w-3.5 text-[#007acc] shrink-0" />
+            <span className="text-[#858585] shrink-0">SECRET:</span>
+            <span
+              className="text-white bg-[#181818] px-2 py-0.5 rounded border border-[#333333] truncate max-w-[220px] sm:max-w-md select-all"
+              title={showSecret ? app.secret : undefined}
+            >
+              {showSecret ? app.secret : `dep_sec_••••••••••••••••••••••••••••••••••••••••${app.secret.slice(-8)}`}
             </span>
             <button
               onClick={() => setShowSecret(!showSecret)}
-              className="text-[#75beff] hover:underline ml-1"
+              className="text-[#75beff] hover:underline ml-1 shrink-0"
             >
               {showSecret ? 'hide' : 'reveal'}
             </button>
@@ -594,7 +613,26 @@ jobs:
 
           {/* TAB 3: Deployment Logs */}
           {activeTab === 'history' && (
-            <div className="space-y-2.5 font-mono text-xs">
+            <div className="space-y-3 font-mono text-xs">
+              <div className="flex items-center justify-between pb-1">
+                <div>
+                  <h3 className="text-xs font-semibold text-white uppercase tracking-wider">
+                    Execution Logs ({app.deployments?.length || 0})
+                  </h3>
+                  <p className="text-xs text-[#858585]">Execution history recorded for {app.name}</p>
+                </div>
+                {app.deployments && app.deployments.length > 0 && (
+                  <button
+                    onClick={handleClearAppLogs}
+                    disabled={isClearingAppLogs}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[#3c3c3c] bg-[#1e1e1e] hover:bg-[#333333] hover:border-[#f14c4c]/50 text-[#858585] hover:text-[#f14c4c] text-xs font-mono transition disabled:opacity-40"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span>{isClearingAppLogs ? 'clearing...' : 'Clear App Logs'}</span>
+                  </button>
+                )}
+              </div>
+
               {app.deployments?.map((d) => (
                 <div
                   key={d.id}

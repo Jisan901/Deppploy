@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw, LogOut, Terminal, Server, Plus } from 'lucide-react';
+import { RefreshCw, LogOut, Terminal, Server, Plus, KeyRound } from 'lucide-react';
 import { User, SystemStats } from '../types';
 
 interface NavbarProps {
@@ -8,6 +8,7 @@ interface NavbarProps {
   onRefresh: () => void;
   onLogout: () => void;
   onOpenCreateApp: () => void;
+  onOpenChangePassword: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -16,6 +17,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onRefresh,
   onLogout,
   onOpenCreateApp,
+  onOpenChangePassword,
 }) => {
   return (
     <header className="sticky top-0 z-30 border-b border-[#2d2d2d] bg-[#181818]/95 backdrop-blur-md">
@@ -70,9 +72,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {user && (
             <div className="flex items-center gap-2 pl-2 border-l border-[#2d2d2d]">
-              <span className="text-xs text-[#858585] font-mono hidden sm:inline">
-                {user.email}
-              </span>
+              <button
+                onClick={onOpenChangePassword}
+                title="Change password"
+                className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-[#858585] hover:text-white hover:bg-[#333333] transition font-mono"
+              >
+                <KeyRound className="h-3 w-3 text-[#007acc]" />
+                <span className="hidden sm:inline">{user.email}</span>
+              </button>
               <button
                 onClick={onLogout}
                 title="Sign out"

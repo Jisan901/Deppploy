@@ -28,7 +28,7 @@ export class AppsService {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   generateSecret(): string {
-    return `dep_sec_${crypto.randomBytes(16).toString("hex")}`;
+    return `dep_sec_${crypto.randomBytes(32).toString("hex")}`;
   }
 
   async listApps() {

@@ -4,6 +4,7 @@ import {
   Search,
   Terminal,
   RefreshCw,
+  Trash2,
 } from 'lucide-react';
 import { api, getToken, clearToken } from './api';
 import { AppItem, Deployment, SystemStats, User } from './types';
@@ -14,6 +15,7 @@ import { AppDetailModal } from './components/AppDetailModal';
 import { CreateAppModal } from './components/CreateAppModal';
 import { DeploymentLogModal } from './components/DeploymentLogModal';
 import { LoginModal } from './components/LoginModal';
+import { ChangePasswordModal } from './components/ChangePasswordModal';
 
 export function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,6 +26,8 @@ export function App() {
   const [selectedApp, setSelectedApp] = useState<(AppItem & { deployments: Deployment[] }) | null>(null);
   const [selectedLogId, setSelectedLogId] = useState<number | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isClearingLogs, setIsClearingLogs] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeView, setActiveView] = useState<'apps' | 'deployments'>('apps');
 
@@ -103,6 +107,21 @@ export function App() {
     setUser(null);
   };
 
+  const handleClearAllLogs = async () => {
+    if (!confirm('Are you sure you want to permanently clear all deployment execution logs? This cannot be undone.')) {
+      return;
+    }
+    setIsClearingLogs(true);
+    try {
+      await api.clearDeployments();
+      await loadData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to clear deployment logs');
+    } finally {
+      setIsClearingLogs(false);
+    }
+  };
+
   const filteredApps = apps.filter(
     (a) =>
       a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -122,6 +141,7 @@ export function App() {
         onRefresh={loadData}
         onLogout={handleLogout}
         onOpenCreateApp={() => setIsCreateOpen(true)}
+        onOpenChangePassword={() => setIsPasswordModalOpen(true)}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -211,13 +231,24 @@ export function App() {
                 </h3>
                 <p className="text-xs text-[#858585]">Every webhook ping and manual trigger executed on this VPS</p>
               </div>
-              <button
-                onClick={loadData}
-                className="p-1.5 rounded border border-[#333333] bg-[#252526] text-[#858585] hover:text-white hover:bg-[#333333] text-xs flex items-center gap-1 font-mono transition"
-              >
-                <RefreshCw className="h-3 w-3" />
-                <span>refresh</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleClearAllLogs}
+                  disabled={deployments.length === 0 || isClearingLogs}
+                  title="Clear all deployment history"
+                  className="p-1.5 px-2.5 rounded border border-[#3c3c3c] bg-[#252526] hover:bg-[#333333] hover:border-[#f14c4c]/50 text-[#858585] hover:text-[#f14c4c] text-xs flex items-center gap-1.5 font-mono transition disabled:opacity-40"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  <span>{isClearingLogs ? 'clearing...' : 'Clear All Logs'}</span>
+                </button>
+                <button
+                  onClick={loadData}
+                  className="p-1.5 rounded border border-[#333333] bg-[#252526] text-[#858585] hover:text-white hover:bg-[#333333] text-xs flex items-center gap-1 font-mono transition"
+                >
+                  <RefreshCw className="h-3 w-3" />
+                  <span>refresh</span>
+                </button>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -304,6 +335,11 @@ export function App() {
       <DeploymentLogModal
         deploymentId={selectedLogId}
         onClose={() => setSelectedLogId(null)}
+      />
+
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
       />
     </div>
   );

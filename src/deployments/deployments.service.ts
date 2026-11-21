@@ -282,4 +282,25 @@ export class DeploymentsService {
     proc.kill("SIGTERM");
     return { success: true, message: "Termination signal sent to deployment process" };
   }
+
+  async clearDeployments(appId?: number) {
+    const deployments = await this.prisma.db.orm.public.Deployment
+      .select("id", "appId")
+      .all();
+
+    let toDelete = deployments;
+    if (appId) {
+      toDelete = deployments.filter((d) => d.appId === appId);
+    }
+
+    for (const d of toDelete) {
+      await this.prisma.db.orm.public.Deployment.where({ id: d.id }).delete();
+    }
+
+    return {
+      success: true,
+      count: toDelete.length,
+      message: `Cleared ${toDelete.length} deployment log(s)`,
+    };
+  }
 }

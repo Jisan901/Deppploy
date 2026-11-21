@@ -94,7 +94,7 @@ export const AppCard: React.FC<AppCardProps> = ({
           </div>
           <div className="flex items-center gap-1.5">
             <KeyRound className="h-3.5 w-3.5 text-[#007acc] shrink-0" />
-            <span>••••••••{app.secret.slice(-6)}</span>
+            <span>••••••••••••••••{app.secret.slice(-8)}</span>
           </div>
         </div>
       </div>

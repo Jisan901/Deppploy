@@ -133,6 +133,13 @@ export const api = {
     return request<Deployment[]>(`/deployments${appId ? `?appId=${appId}` : ''}`);
   },
 
+  async clearDeployments(appId?: number): Promise<{ success: boolean; count: number; message: string }> {
+    return request<{ success: boolean; count: number; message: string }>(
+      `/deployments/clear${appId ? `?appId=${appId}` : ''}`,
+      { method: 'DELETE' }
+    );
+  },
+
   async getDeployment(id: number): Promise<Deployment> {
     return request<Deployment>(`/deployments/${id}`);
   },

@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
@@ -26,6 +27,18 @@ export class DeploymentsController {
     const parsedAppId = appId ? Number(appId) : undefined;
     const parsedLimit = limit ? Number(limit) : 50;
     return this.deploymentsService.listDeployments(parsedAppId, parsedLimit);
+  }
+
+  @Delete("clear")
+  async clearAllLogs(@Query("appId") appId?: string) {
+    const parsedAppId = appId ? Number(appId) : undefined;
+    return this.deploymentsService.clearDeployments(parsedAppId);
+  }
+
+  @Post("clear")
+  async clearAllLogsPost(@Query("appId") appId?: string) {
+    const parsedAppId = appId ? Number(appId) : undefined;
+    return this.deploymentsService.clearDeployments(parsedAppId);
   }
 
   @Get(":id")
