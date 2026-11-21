@@ -1,5 +1,11 @@
 import "reflect-metadata";
 
+try {
+  process.loadEnvFile?.();
+} catch {
+  // .env not present or already loaded
+}
+
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module.ts";
 

@@ -114,3 +114,4 @@ export class WebhookController {
     return this.handleTrigger(secret, action, req);
   }
 }
+

@@ -141,3 +141,4 @@ export const AppCard: React.FC<AppCardProps> = ({
     </div>
   );
 };
+

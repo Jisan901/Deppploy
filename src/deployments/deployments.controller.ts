@@ -38,3 +38,4 @@ export class DeploymentsController {
     return this.deploymentsService.cancelDeployment(id);
   }
 }
+

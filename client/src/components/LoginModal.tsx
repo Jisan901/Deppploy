@@ -100,3 +100,4 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoggedIn }) => {
     </div>
   );
 };
+
