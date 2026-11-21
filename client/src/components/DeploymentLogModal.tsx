@@ -131,7 +131,7 @@ export const DeploymentLogModal: React.FC<DeploymentLogModalProps> = ({
           <CodeEditor
             value={combinedOutput || (loading ? 'Loading stream...' : 'No output captured.')}
             readOnly={true}
-            language="text"
+            language="logs"
             label="PROCESS OUTPUT"
             minHeight="320px"
             maxHeight="520px"

@@ -584,7 +584,7 @@ jobs:
             -H "Content-Type: application/json" \\
             -d '{"ref": "\${{ github.ref }}", "sha": "\${{ github.sha }}", "actor": "\${{ github.actor }}"}'`}
                   readOnly={true}
-                  language="shell"
+                  language="yaml"
                   label="WORKFLOW YAML"
                   minHeight="180px"
                 />
