@@ -23,3 +23,110 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
 }
+
+/* VS Code Dark+ Syntax Highlighting for CodeEditor */
+.vscode-dark-editor pre,
+.vscode-dark-editor code {
+  color: #d4d4d4;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  tab-size: 2;
+}
+
+.vscode-dark-editor .token.comment,
+.vscode-dark-editor .token.prolog,
+.vscode-dark-editor .token.doctype,
+.vscode-dark-editor .token.cdata {
+  color: #6a9955 !important;
+  font-style: italic;
+}
+
+.vscode-dark-editor .token.punctuation {
+  color: #d4d4d4;
+}
+
+.vscode-dark-editor .token.property,
+.vscode-dark-editor .token.tag,
+.vscode-dark-editor .token.constant,
+.vscode-dark-editor .token.symbol,
+.vscode-dark-editor .token.deleted {
+  color: #9cdcfe;
+}
+
+.vscode-dark-editor .token.boolean,
+.vscode-dark-editor .token.keyword {
+  color: #569cd6;
+  font-weight: 600;
+}
+
+.vscode-dark-editor .token.number {
+  color: #b5cea8;
+}
+
+.vscode-dark-editor .token.selector,
+.vscode-dark-editor .token.attr-name,
+.vscode-dark-editor .token.string,
+.vscode-dark-editor .token.char,
+.vscode-dark-editor .token.inserted {
+  color: #ce9178;
+}
+
+.vscode-dark-editor .token.operator,
+.vscode-dark-editor .token.entity,
+.vscode-dark-editor .token.url {
+  color: #d4d4d4;
+}
+
+.vscode-dark-editor .token.atrule,
+.vscode-dark-editor .token.attr-value {
+  color: #9cdcfe;
+}
+
+.vscode-dark-editor .token.function,
+.vscode-dark-editor .token.class-name,
+.vscode-dark-editor .token.builtin {
+  color: #dcdcaa;
+  font-weight: 600;
+}
+
+.vscode-dark-editor .token.regex,
+.vscode-dark-editor .token.important,
+.vscode-dark-editor .token.variable {
+  color: #9cdcfe;
+}
+
+.vscode-dark-editor .token.stdout {
+  color: #4ec9b0;
+  font-weight: 700;
+  background: rgba(78, 201, 176, 0.12);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.vscode-dark-editor .token.stderr {
+  color: #f48771;
+  font-weight: 700;
+  background: rgba(244, 135, 113, 0.15);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.vscode-dark-editor .token.error {
+  color: #f48771;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+}
+
+.vscode-dark-editor .token.success {
+  color: #4ec9b0;
+  font-weight: 600;
+}
+
+.vscode-dark-editor .token.timestamp {
+  color: #858585;
+}
+
+.vscode-dark-editor .token.hash {
+  color: #b5cea8;
+}
+

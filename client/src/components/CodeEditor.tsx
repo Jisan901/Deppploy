@@ -1,5 +1,9 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { Copy, Check, Terminal, Maximize2, Minimize2, FileCode } from 'lucide-react';
+import { Copy, Check, Maximize2, Minimize2, FileCode } from 'lucide-react';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-bash.js';
+import 'prismjs/components/prism-yaml.js';
+import 'prismjs/components/prism-json.js';
 
 export type SupportedLanguage = 'shell' | 'yaml' | 'json' | 'logs' | 'text';
 
@@ -15,191 +19,54 @@ interface CodeEditorProps {
   showLineNumbers?: boolean;
 }
 
-// Authentic VS Code Dark+ (Default Dark Modern) Syntax Highlighting
+// Register custom Prism grammar for execution logs
+if (!Prism.languages.logs) {
+  Prism.languages.logs = {
+    stdout: /\[STDOUT\]|\[DEPPLOY.*?\]/i,
+    stderr: /\[STDERR\]/i,
+    error: {
+      pattern: /\b(?:error|fatal|failed|failure|rejected|timed out|permission denied|exit code [1-9]\d*)\b/i,
+      greedy: true,
+    },
+    success: {
+      pattern: /\b(?:success|passed|ok|done|completed|listening|online)\b/i,
+      greedy: true,
+    },
+    timestamp: {
+      pattern: /\b\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?\b/,
+      greedy: true,
+    },
+    hash: {
+      pattern: /\b[0-9a-f]{7,40}\b/,
+      greedy: true,
+    },
+    number: {
+      pattern: /\b\d+\b/,
+      greedy: true,
+    },
+  };
+}
+
 function highlightCode(code: string, language: SupportedLanguage): string {
   if (!code) return '';
 
-  const escape = (str: string) =>
-    str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-
   if (language === 'text') {
-    return `<span style="color: #d4d4d4;">${escape(code)}</span>`;
+    return Prism.util.encode(code) as string;
   }
 
-  const lines = code.split('\n');
+  let grammar = Prism.languages[language];
+  let langId: string = language;
 
-  const highlightedLines = lines.map((line) => {
-    let escaped = escape(line);
+  if (language === 'shell') {
+    grammar = Prism.languages.bash;
+    langId = 'bash';
+  }
 
-    if (language === 'shell') {
-      // 1. Comments: #6a9955 (VS Code green italic)
-      escaped = escaped.replace(
-        /(#.*)$/,
-        '<span style="color: #6a9955; font-style: italic;">$1</span>',
-      );
+  if (!grammar) {
+    return Prism.util.encode(code) as string;
+  }
 
-      // 2. Strings: #ce9178 (VS Code orange-brown)
-      escaped = escaped.replace(
-        /(&quot;.*?&quot;|&#39;.*?&#39;|".*?"|'.*?')/g,
-        '<span style="color: #ce9178;">$1</span>',
-      );
-
-      // 3. Environment Variables: #9cdcfe (VS Code light blue variable)
-      escaped = escaped.replace(
-        /(\$\{?[A-Za-z0-9_]+\}?)/g,
-        '<span style="color: #9cdcfe; font-weight: 600;">$1</span>',
-      );
-
-      // 4. Command flags: #9cdcfe
-      escaped = escaped.replace(
-        /(\s)(--?[a-zA-Z0-9_-]+)/g,
-        '$1<span style="color: #9cdcfe;">$2</span>',
-      );
-
-      // 5. Common CLI commands & functions: #dcdcaa (VS Code function yellow)
-      escaped = escaped.replace(
-        /\b(git|pnpm|npm|yarn|pm2|docker|compose|node|curl|echo|export|cd|mkdir|rm|cp|mv|cat|grep|sed|awk|systemctl|exit|sh|bash)\b/g,
-        '<span style="color: #dcdcaa; font-weight: 600;">$1</span>',
-      );
-
-      // 6. Keywords & operators: #569cd6 (VS Code blue keyword)
-      escaped = escaped.replace(
-        /\b(if|then|else|elif|fi|for|while|in|do|done|case|esac|return|function)\b/g,
-        '<span style="color: #569cd6; font-weight: 600;">$1</span>',
-      );
-
-      // 7. Operators: #d4d4d4
-      escaped = escaped.replace(
-        /(&amp;&amp;|\|\||\||&gt;&gt;|&gt;|&lt;|;)/g,
-        '<span style="color: #d4d4d4; font-weight: bold;">$1</span>',
-      );
-
-      return escaped;
-    }
-
-    if (language === 'yaml') {
-      // 1. Comments: #6a9955
-      escaped = escaped.replace(
-        /(#.*)$/,
-        '<span style="color: #6a9955; font-style: italic;">$1</span>',
-      );
-
-      // 2. YAML Keys: #9cdcfe (light blue)
-      escaped = escaped.replace(
-        /^(\s*)([a-zA-Z0-9_-]+)(:)/g,
-        '$1<span style="color: #9cdcfe; font-weight: 600;">$2</span><span style="color: #d4d4d4;">:</span>',
-      );
-
-      // 3. List dashes: #569cd6
-      escaped = escaped.replace(
-        /^(\s*)(- )/g,
-        '$1<span style="color: #569cd6; font-weight: bold;">$2</span>',
-      );
-
-      // 4. Strings: #ce9178
-      escaped = escaped.replace(
-        /(&quot;.*?&quot;|&#39;.*?&#39;|".*?"|'.*?')/g,
-        '<span style="color: #ce9178;">$1</span>',
-      );
-
-      // 5. Numbers: #b5cea8
-      escaped = escaped.replace(
-        /\b(\d+)\b/g,
-        '<span style="color: #b5cea8;">$1</span>',
-      );
-
-      // 6. Booleans & Null: #569cd6
-      escaped = escaped.replace(
-        /\b(true|false|null|yes|no)\b/g,
-        '<span style="color: #569cd6; font-weight: 600;">$1</span>',
-      );
-
-      return escaped;
-    }
-
-    if (language === 'json') {
-      // 1. JSON Keys: #9cdcfe (VS Code property blue)
-      escaped = escaped.replace(
-        /(&quot;.*?&quot;|".*?")(?=\s*:)/g,
-        '<span style="color: #9cdcfe;">$1</span>',
-      );
-
-      // 2. JSON String values: #ce9178 (orange)
-      escaped = escaped.replace(
-        /(:\s*)(&quot;.*?&quot;|".*?")/g,
-        '$1<span style="color: #ce9178;">$2</span>',
-      );
-
-      // 3. Numbers: #b5cea8 (green)
-      escaped = escaped.replace(
-        /\b(-?\d+(?:\.\d+)?)\b/g,
-        '<span style="color: #b5cea8;">$1</span>',
-      );
-
-      // 4. Booleans / null: #569cd6 (blue)
-      escaped = escaped.replace(
-        /\b(true|false|null)\b/g,
-        '<span style="color: #569cd6; font-weight: 600;">$1</span>',
-      );
-
-      // 5. Brackets / braces: #ffd700 / #da70d6
-      escaped = escaped.replace(
-        /([{}])/g,
-        '<span style="color: #ffd700;">$1</span>',
-      );
-      escaped = escaped.replace(
-        /([[\],])/g,
-        '<span style="color: #da70d6;">$1</span>',
-      );
-
-      return escaped;
-    }
-
-    if (language === 'logs') {
-      // 1. Stream markers: [STDOUT], [STDERR], [DEPPLOY] -> #4ec9b0 / #569cd6
-      escaped = escaped.replace(
-        /(\[STDOUT\]|\[DEPPLOY.*?\])/gi,
-        '<span style="color: #4ec9b0; font-weight: bold; background: rgba(78, 201, 176, 0.12); padding: 1px 4px; border-radius: 3px;">$1</span>',
-      );
-      escaped = escaped.replace(
-        /(\[STDERR\])/gi,
-        '<span style="color: #f48771; font-weight: bold; background: rgba(244, 135, 113, 0.15); padding: 1px 4px; border-radius: 3px;">$1</span>',
-      );
-
-      // 2. Failure keywords: #f48771 (VS Code red/salmon)
-      escaped = escaped.replace(
-        /\b(error|fatal|failed|failure|rejected|timed out|permission denied|exit code [1-9]\d*)\b/gi,
-        '<span style="color: #f48771; font-weight: 600; text-decoration: underline decoration-dashed;">$1</span>',
-      );
-
-      // 3. Success keywords: #4ec9b0 (VS Code cyan/teal)
-      escaped = escaped.replace(
-        /\b(success|passed|ok|done|completed|listening|online)\b/gi,
-        '<span style="color: #4ec9b0; font-weight: 600;">$1</span>',
-      );
-
-      // 4. Timestamps: #858585
-      escaped = escaped.replace(
-        /(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)/g,
-        '<span style="color: #858585;">$1</span>',
-      );
-
-      // 5. Commit hashes / hex: #b5cea8
-      escaped = escaped.replace(
-        /\b([0-9a-f]{7,40})\b/g,
-        '<span style="color: #b5cea8;">$1</span>',
-      );
-
-      return escaped;
-    }
-
-    return `<span style="color: #d4d4d4;">${escaped}</span>`;
-  });
-
-  return highlightedLines.join('\n');
+  return Prism.highlight(code, grammar, langId);
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -219,6 +86,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const highlightOverlayRef = useRef<HTMLPreElement>(null);
+  const readOnlyPreRef = useRef<HTMLPreElement>(null);
 
   const lines = value ? value.split('\n') : [''];
   const lineCount = Math.max(lines.length, 1);
@@ -233,7 +101,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   // Synchronize scroll between textarea, line numbers, and highlight overlay
-  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLPreElement>) => {
     const scrollTop = e.currentTarget.scrollTop;
     const scrollLeft = e.currentTarget.scrollLeft;
 
@@ -317,7 +185,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   return (
     <div
-      className={`relative rounded-md border border-[#333333] bg-[#1e1e1e] font-mono transition-all overflow-hidden shadow-lg ${
+      className={`vscode-dark-editor relative rounded-md border border-[#333333] bg-[#1e1e1e] font-mono transition-all overflow-hidden shadow-lg ${
         isExpanded ? 'fixed inset-4 z-50 flex flex-col' : 'w-full'
       }`}
     >
@@ -387,35 +255,43 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
         {/* Content Area */}
         <div className="relative flex-1 overflow-hidden bg-[#1e1e1e]">
-          {/* Syntax Layer (Underneath) */}
-          <pre
-            ref={highlightOverlayRef}
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 m-0 overflow-hidden p-3 font-mono text-xs leading-5 whitespace-pre break-normal select-none"
-            dangerouslySetInnerHTML={{ __html: highlightedHtml + '\n' }}
-          />
+          {readOnly ? (
+            /* Read-Only mode: direct selectable highlighted pre */
+            <pre
+              ref={readOnlyPreRef}
+              onScroll={handleScroll}
+              className="h-full w-full overflow-auto p-3 font-mono text-xs leading-5 whitespace-pre break-normal select-text selection:bg-[#264f78] selection:text-white m-0 text-[#d4d4d4]"
+              dangerouslySetInnerHTML={{ __html: highlightedHtml + '\n' }}
+            />
+          ) : (
+            /* Editable mode: synchronized overlay + textarea */
+            <>
+              {/* Syntax Layer (Underneath) */}
+              <pre
+                ref={highlightOverlayRef}
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 m-0 overflow-hidden p-3 font-mono text-xs leading-5 whitespace-pre break-normal select-none text-[#d4d4d4]"
+                dangerouslySetInnerHTML={{ __html: highlightedHtml + '\n' }}
+              />
 
-          {/* Textarea Input (On Top) */}
-          <textarea
-            ref={textareaRef}
-            value={value}
-            readOnly={readOnly}
-            onChange={(e) => {
-              if (onChange) onChange(e.target.value);
-              updateCursorPos(e.currentTarget);
-            }}
-            onKeyDown={handleKeyDown}
-            onKeyUp={(e) => updateCursorPos(e.currentTarget)}
-            onClick={(e) => updateCursorPos(e.currentTarget)}
-            onScroll={handleScroll}
-            placeholder={placeholder}
-            spellCheck={false}
-            className={`absolute inset-0 h-full w-full resize-none bg-transparent p-3 font-mono text-xs leading-5 whitespace-pre break-normal focus:outline-none selection:bg-[#264f78] selection:text-white ${
-              readOnly
-                ? 'text-transparent caret-transparent'
-                : 'text-transparent caret-[#ffffff]'
-            }`}
-          />
+              {/* Textarea Input (On Top) */}
+              <textarea
+                ref={textareaRef}
+                value={value}
+                onChange={(e) => {
+                  if (onChange) onChange(e.target.value);
+                  updateCursorPos(e.currentTarget);
+                }}
+                onKeyDown={handleKeyDown}
+                onKeyUp={(e) => updateCursorPos(e.currentTarget)}
+                onClick={(e) => updateCursorPos(e.currentTarget)}
+                onScroll={handleScroll}
+                placeholder={placeholder}
+                spellCheck={false}
+                className="absolute inset-0 h-full w-full resize-none bg-transparent p-3 font-mono text-xs leading-5 whitespace-pre break-normal focus:outline-none selection:bg-[#264f78] selection:text-white text-transparent caret-[#ffffff]"
+              />
+            </>
+          )}
         </div>
       </div>
 
