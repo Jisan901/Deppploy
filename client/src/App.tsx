@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
   Layers,
-  Activity,
-  CheckCircle2,
-  XCircle,
   Search,
-  Plus,
   Terminal,
-  ShieldAlert,
-  Server,
   RefreshCw,
+  Plus,
 } from 'lucide-react';
 import { api, getToken, clearToken } from './api';
 import { AppItem, Deployment, SystemStats, User } from './types';
@@ -32,9 +27,7 @@ export function App() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeView, setActiveView] = useState<'apps' | 'deployments'>('apps');
-  const [loading, setLoading] = useState(false);
 
-  // Load Initial Data
   const loadData = async () => {
     try {
       if (getToken()) {
@@ -57,7 +50,6 @@ export function App() {
         setStats(statsData);
         setDeployments(deploysData);
 
-        // If an app detail modal is currently open, refresh its data too
         if (selectedApp) {
           const freshApp = await api.getApp(selectedApp.id).catch(() => null);
           if (freshApp) setSelectedApp(freshApp);
@@ -77,7 +69,6 @@ export function App() {
     };
     window.addEventListener('auth:unauthorized', handleUnauthorized);
 
-    // Auto-refresh interval every 6 seconds to update running deployments
     const interval = setInterval(() => {
       if (getToken()) {
         loadData();
@@ -125,7 +116,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
       <Navbar
         user={user}
         stats={stats}
@@ -134,44 +125,44 @@ export function App() {
         onOpenCreateApp={() => setIsCreateOpen(true)}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* System & Security Stats Overview */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* System metrics row */}
         <DashboardStats stats={stats} />
 
-        {/* Navigation & Search Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-2 sm:pb-0 sm:border-0">
+        {/* View Switcher & Search Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1 border-b border-neutral-900 pb-3">
+          <div className="flex items-center gap-1 font-mono text-xs">
             <button
               onClick={() => setActiveView('apps')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition ${
+              className={`px-3 py-1.5 rounded transition ${
                 activeView === 'apps'
-                  ? 'bg-slate-800 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white text-black font-semibold'
+                  : 'text-neutral-400 hover:text-white hover:bg-neutral-950'
               }`}
             >
-              Applications ({apps.length})
+              APPLICATIONS ({apps.length})
             </button>
             <button
               onClick={() => setActiveView('deployments')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 ${
+              className={`px-3 py-1.5 rounded transition flex items-center gap-1.5 ${
                 activeView === 'deployments'
-                  ? 'bg-slate-800 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white text-black font-semibold'
+                  : 'text-neutral-400 hover:text-white hover:bg-neutral-950'
               }`}
             >
-              <Terminal className="h-4 w-4" />
-              <span>Execution Audit Logs ({deployments.length})</span>
+              <Terminal className="h-3.5 w-3.5" />
+              <span>AUDIT LOGS ({deployments.length})</span>
             </button>
           </div>
 
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-neutral-600" />
             <input
               type="text"
-              placeholder="Search apps, paths, slugs..."
+              placeholder="Search apps or paths..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none transition"
+              className="w-full pl-8 pr-2.5 py-1.5 rounded bg-neutral-950 border border-neutral-800 text-xs text-white placeholder-neutral-600 focus:border-neutral-500 focus:outline-none transition font-mono"
             />
           </div>
         </div>
@@ -179,7 +170,7 @@ export function App() {
         {/* View 1: Applications Grid */}
         {activeView === 'apps' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {filteredApps.map((app) => (
                 <AppCard
                   key={app.id}
@@ -192,17 +183,17 @@ export function App() {
             </div>
 
             {filteredApps.length === 0 && (
-              <div className="p-12 text-center rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 space-y-3">
-                <Layers className="h-8 w-8 text-slate-600 mx-auto" />
-                <h3 className="text-sm font-semibold text-white">No Applications Found</h3>
-                <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              <div className="p-12 text-center rounded-lg border border-dashed border-neutral-800 space-y-2.5">
+                <Layers className="h-6 w-6 text-neutral-600 mx-auto" />
+                <h3 className="text-xs font-semibold text-white font-mono uppercase">No Applications Found</h3>
+                <p className="text-xs text-neutral-500 max-w-sm mx-auto">
                   {searchQuery
                     ? 'No apps match your search filter.'
                     : 'Click "+ New App" to register a project and configure safe deployment commands.'}
                 </p>
                 <button
                   onClick={() => setIsCreateOpen(true)}
-                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium transition"
+                  className="px-3 py-1.5 rounded bg-white text-black hover:bg-neutral-200 text-xs font-medium transition"
                 >
                   Create Application
                 </button>
@@ -213,80 +204,80 @@ export function App() {
 
         {/* View 2: Global Deployments Audit Log Table */}
         {activeView === 'deployments' && (
-          <div className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden shadow-xl">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+          <div className="rounded-lg border border-neutral-800 bg-neutral-950 overflow-hidden">
+            <div className="px-5 py-3 border-b border-neutral-800 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-white">Audit Execution Stream</h3>
-                <p className="text-xs text-slate-400">All webhook triggers and manual actions executed on VPS</p>
+                <h3 className="text-xs font-semibold text-white uppercase tracking-wider font-mono">
+                  Execution Audit Stream
+                </h3>
+                <p className="text-xs text-neutral-500">Every webhook ping and manual trigger executed on this VPS</p>
               </div>
               <button
                 onClick={loadData}
-                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1.5"
+                className="p-1.5 rounded border border-neutral-800 text-neutral-400 hover:text-white text-xs flex items-center gap-1 font-mono transition"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
-                <span>Refresh</span>
+                <RefreshCw className="h-3 w-3" />
+                <span>refresh</span>
               </button>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950/60 border-b border-slate-800 text-slate-400 font-mono">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-black border-b border-neutral-800 text-neutral-500 text-[11px]">
                   <tr>
-                    <th className="px-6 py-3">ID</th>
-                    <th className="px-6 py-3">App</th>
-                    <th className="px-6 py-3">Action</th>
-                    <th className="px-6 py-3">Status</th>
-                    <th className="px-6 py-3">Duration</th>
-                    <th className="px-6 py-3">Triggered By</th>
-                    <th className="px-6 py-3">Time</th>
-                    <th className="px-6 py-3 text-right">Inspect</th>
+                    <th className="px-5 py-2.5">ID</th>
+                    <th className="px-5 py-2.5">APP</th>
+                    <th className="px-5 py-2.5">ACTION</th>
+                    <th className="px-5 py-2.5">STATUS</th>
+                    <th className="px-5 py-2.5">DURATION</th>
+                    <th className="px-5 py-2.5">TRIGGER</th>
+                    <th className="px-5 py-2.5">TIME</th>
+                    <th className="px-5 py-2.5 text-right">OUTPUT</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-neutral-900">
                   {deployments.map((d) => (
                     <tr
                       key={d.id}
                       onClick={() => setSelectedLogId(d.id)}
-                      className="hover:bg-slate-800/40 transition cursor-pointer font-mono"
+                      className="hover:bg-neutral-900/60 transition cursor-pointer"
                     >
-                      <td className="px-6 py-3.5 font-bold text-white">#{d.id}</td>
-                      <td className="px-6 py-3.5 text-slate-200">{d.app?.name || `#${d.appId}`}</td>
-                      <td className="px-6 py-3.5 text-emerald-400">{d.actionName}</td>
-                      <td className="px-6 py-3.5">
+                      <td className="px-5 py-2.5 font-bold text-white">#{d.id}</td>
+                      <td className="px-5 py-2.5 text-neutral-300">{d.app?.name || `#${d.appId}`}</td>
+                      <td className="px-5 py-2.5 text-white font-semibold">{d.actionName}</td>
+                      <td className="px-5 py-2.5">
                         {d.status === 'SUCCESS' && (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            <CheckCircle2 className="h-3 w-3" />
-                            SUCCESS
+                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-white text-black font-semibold">
+                            PASSED
                           </span>
                         )}
                         {d.status === 'FAILED' && (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
-                            <XCircle className="h-3 w-3" />
+                          <span className="text-[10px] px-1.5 py-0.2 rounded border border-neutral-700 text-neutral-400">
                             FAILED ({d.exitCode})
                           </span>
                         )}
                         {d.status === 'RUNNING' && (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">
+                          <span className="text-[10px] px-1.5 py-0.2 rounded border border-neutral-700 text-white animate-pulse">
                             RUNNING
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-3.5 text-slate-400">
+                      <td className="px-5 py-2.5 text-neutral-400">
                         {d.durationMs ? `${(d.durationMs / 1000).toFixed(2)}s` : '-'}
                       </td>
-                      <td className="px-6 py-3.5 text-slate-400 truncate max-w-xs">{d.triggeredBy}</td>
-                      <td className="px-6 py-3.5 text-slate-500">
+                      <td className="px-5 py-2.5 text-neutral-500 truncate max-w-xs">{d.triggeredBy}</td>
+                      <td className="px-5 py-2.5 text-neutral-500">
                         {new Date(d.createdAt).toLocaleTimeString()}
                       </td>
-                      <td className="px-6 py-3.5 text-right">
-                        <button className="text-emerald-400 hover:underline">view log →</button>
+                      <td className="px-5 py-2.5 text-right">
+                        <button className="text-neutral-400 hover:text-white underline">view log →</button>
                       </td>
                     </tr>
                   ))}
                   {deployments.length === 0 && (
                     <tr>
-                      <td colSpan={8} className="px-6 py-8 text-center text-slate-500 italic">
-                        No deployments executed yet.
+                      <td colSpan={8} className="px-5 py-6 text-center text-neutral-600 italic">
+                        No executions recorded yet.
                       </td>
                     </tr>
                   )}
@@ -318,4 +309,3 @@ export function App() {
     </div>
   );
 }
-

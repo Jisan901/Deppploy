@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Server, RefreshCw, LogOut, Terminal, Lock } from 'lucide-react';
+import { RefreshCw, LogOut, Terminal, Server } from 'lucide-react';
 import { User, SystemStats } from '../types';
 
 interface NavbarProps {
@@ -18,39 +18,36 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCreateApp,
 }) => {
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-30 border-b border-neutral-800 bg-black/90 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <ShieldCheck className="h-6 w-6 text-slate-950" />
+          <div className="h-8 w-8 rounded-md bg-white flex items-center justify-center text-black font-mono font-black text-sm select-none">
+            D
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-xl tracking-tight text-white">Deppploy</span>
-              <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Secure VPS CI/CD
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">Zero-arbitrary command runner & webhook gatekeeper</p>
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-sm tracking-tight text-white">Deppploy</span>
+            <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-neutral-800 text-neutral-400">
+              VPS CI/CD
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {stats && (
-            <div className="hidden md:flex items-center gap-4 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300">
+            <div className="hidden md:flex items-center gap-3 px-2.5 py-1 rounded-md border border-neutral-800 bg-neutral-950 text-xs font-mono text-neutral-400">
               <div className="flex items-center gap-1.5">
-                <Server className="h-3.5 w-3.5 text-emerald-400" />
-                <span>{stats.server.hostname}</span>
+                <Server className="h-3 w-3 text-neutral-500" />
+                <span className="text-neutral-300">{stats.server.hostname}</span>
               </div>
-              <div className="h-3 w-px bg-slate-700" />
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-400">CPU:</span>
-                <span className="font-mono text-emerald-400">{stats.server.loadAvg[0]?.toFixed(2)}</span>
+              <span className="text-neutral-700">/</span>
+              <div>
+                <span className="text-neutral-500">CPU:</span>{' '}
+                <span className="text-white">{stats.server.loadAvg[0]?.toFixed(2)}</span>
               </div>
-              <div className="h-3 w-px bg-slate-700" />
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-400">RAM:</span>
-                <span className="font-mono text-emerald-400">{stats.server.memory.usedPercentage}%</span>
+              <span className="text-neutral-700">/</span>
+              <div>
+                <span className="text-neutral-500">RAM:</span>{' '}
+                <span className="text-white">{stats.server.memory.usedPercentage}%</span>
               </div>
             </div>
           )}
@@ -58,31 +55,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onRefresh}
             title="Refresh state"
-            className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition"
+            className="p-1.5 rounded-md border border-neutral-800 bg-neutral-950 hover:bg-neutral-900 text-neutral-400 hover:text-white transition"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-3.5 w-3.5" />
           </button>
 
           <button
             onClick={onOpenCreateApp}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm transition shadow-lg shadow-emerald-600/20"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-neutral-200 text-black font-medium text-xs transition select-none"
           >
-            <span className="text-base leading-none">+</span>
+            <span className="text-sm leading-none">+</span>
             <span>New App</span>
           </button>
 
           {user && (
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
-              <div className="text-right hidden sm:block">
-                <div className="text-xs font-medium text-slate-200">{user.name || user.email}</div>
-                <div className="text-[10px] text-slate-400 uppercase tracking-wider">{user.role}</div>
-              </div>
+            <div className="flex items-center gap-2 pl-2 border-l border-neutral-800">
+              <span className="text-xs text-neutral-400 font-mono hidden sm:inline">
+                {user.email}
+              </span>
               <button
                 onClick={onLogout}
                 title="Sign out"
-                className="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition"
+                className="p-1.5 rounded-md text-neutral-500 hover:text-white hover:bg-neutral-900 transition"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3.5 w-3.5" />
               </button>
             </div>
           )}
@@ -91,4 +87,3 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
-
