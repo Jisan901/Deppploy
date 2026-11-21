@@ -28,7 +28,7 @@ import { WebhookController } from "./webhook/webhook.controller.ts";
     }),
     ServeStaticModule.forRoot({
       rootPath: path.join(process.cwd(), "client", "dist"),
-      exclude: ["/api/(.*)"],
+      serveRoot: "/admin",
       serveStaticOptions: {
         index: "index.html",
       },

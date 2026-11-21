@@ -96,7 +96,7 @@ export class WebhookController {
     @Body() body: any,
   ) {
     // Avoid conflicting with static assets or internal paths
-    if (["api", "assets", "favicon.ico", "vite.svg"].includes(secret)) {
+    if (["api", "admin", "assets", "favicon.ico", "vite.svg"].includes(secret)) {
       return;
     }
     return this.handleTrigger(secret, action, req, body);
