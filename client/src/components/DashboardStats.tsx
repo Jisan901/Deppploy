@@ -11,43 +11,43 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
 
   return (
     <div className="space-y-4">
-      {/* Minimal Monochrome Security Notice */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3.5 py-2 rounded-lg border border-neutral-800/80 bg-neutral-950 text-xs text-neutral-400">
+      {/* VS Code Dark Blue Security Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3.5 py-2.5 rounded border border-[#007acc]/40 bg-[#0e639c]/15 text-xs text-[#cccccc]">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-white shrink-0" />
+          <ShieldCheck className="h-4 w-4 text-[#007acc] shrink-0" />
           <span>
-            <strong className="text-white font-medium">Safe Webhook Guard:</strong> External CI/CD pings can only trigger administrator-configured commands on this VPS.
+            <strong className="text-white font-medium">Safe Webhook Guard:</strong> External CI/CD pings can only execute administrator-configured whitelisted commands on this VPS.
           </span>
         </div>
-        <div className="font-mono text-[11px] text-neutral-500 shrink-0">
+        <div className="font-mono text-[11px] px-2 py-0.5 rounded bg-[#1e1e1e] border border-[#007acc]/30 text-[#75beff] shrink-0">
           POST /api/webhook/:secret/:action
         </div>
       </div>
 
-      {/* 4 Minimal Metric Cards */}
+      {/* 4 Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-lg border border-neutral-800 bg-neutral-950">
-          <div className="text-[11px] text-neutral-500 uppercase tracking-wider font-mono">Applications</div>
+        <div className="p-3.5 rounded border border-[#333333] bg-[#252526] hover:border-[#007acc]/50 transition">
+          <div className="text-[11px] text-[#858585] uppercase tracking-wider font-mono">Applications</div>
           <div className="text-xl font-bold text-white mt-1 font-mono">{stats.metrics.totalApps}</div>
-          <div className="text-[11px] text-neutral-400 mt-0.5">{stats.metrics.activeApps} active on server</div>
+          <div className="text-[11px] text-[#858585] mt-0.5">{stats.metrics.activeApps} active on server</div>
         </div>
 
-        <div className="p-3.5 rounded-lg border border-neutral-800 bg-neutral-950">
-          <div className="text-[11px] text-neutral-500 uppercase tracking-wider font-mono">Active Runs</div>
-          <div className="text-xl font-bold text-white mt-1 font-mono">{stats.metrics.runningDeployments}</div>
-          <div className="text-[11px] text-neutral-400 mt-0.5">In execution</div>
+        <div className="p-3.5 rounded border border-[#333333] bg-[#252526] hover:border-[#007acc]/50 transition">
+          <div className="text-[11px] text-[#858585] uppercase tracking-wider font-mono">Active Runs</div>
+          <div className="text-xl font-bold text-[#75beff] mt-1 font-mono">{stats.metrics.runningDeployments}</div>
+          <div className="text-[11px] text-[#858585] mt-0.5">In execution</div>
         </div>
 
-        <div className="p-3.5 rounded-lg border border-neutral-800 bg-neutral-950">
-          <div className="text-[11px] text-neutral-500 uppercase tracking-wider font-mono">Successful</div>
-          <div className="text-xl font-bold text-white mt-1 font-mono">{stats.metrics.successDeployments}</div>
-          <div className="text-[11px] text-neutral-400 mt-0.5">Exit code 0</div>
+        <div className="p-3.5 rounded border border-[#333333] bg-[#252526] hover:border-[#007acc]/50 transition">
+          <div className="text-[11px] text-[#858585] uppercase tracking-wider font-mono">Successful</div>
+          <div className="text-xl font-bold text-[#4ec9b0] mt-1 font-mono">{stats.metrics.successDeployments}</div>
+          <div className="text-[11px] text-[#858585] mt-0.5">Exit code 0</div>
         </div>
 
-        <div className="p-3.5 rounded-lg border border-neutral-800 bg-neutral-950">
-          <div className="text-[11px] text-neutral-500 uppercase tracking-wider font-mono">Failed</div>
-          <div className="text-xl font-bold text-white mt-1 font-mono">{stats.metrics.failedDeployments}</div>
-          <div className="text-[11px] text-neutral-400 mt-0.5">Check audit logs</div>
+        <div className="p-3.5 rounded border border-[#333333] bg-[#252526] hover:border-[#007acc]/50 transition">
+          <div className="text-[11px] text-[#858585] uppercase tracking-wider font-mono">Failed</div>
+          <div className="text-xl font-bold text-[#f14c4c] mt-1 font-mono">{stats.metrics.failedDeployments}</div>
+          <div className="text-[11px] text-[#858585] mt-0.5">Check audit logs</div>
         </div>
       </div>
     </div>

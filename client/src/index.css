@@ -4,24 +4,24 @@
 
 @layer base {
   body {
-    @apply bg-black text-white font-sans antialiased selection:bg-neutral-800 selection:text-white;
+    @apply bg-[#1e1e1e] text-[#cccccc] font-sans antialiased selection:bg-[#264f78] selection:text-white;
   }
 }
 
-/* Minimal black and white custom scrollbar */
+/* VS Code Dark scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #1e1e1e;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 3px;
+  background: #424242;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #4f4f4f;
 }
 
 /* VS Code Dark+ Syntax Highlighting for CodeEditor */
@@ -129,4 +129,3 @@
 .vscode-dark-editor .token.hash {
   color: #b5cea8;
 }
-

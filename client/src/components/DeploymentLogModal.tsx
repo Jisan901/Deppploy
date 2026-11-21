@@ -43,12 +43,12 @@ export const DeploymentLogModal: React.FC<DeploymentLogModalProps> = ({
     .join('\n');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-lg bg-black border border-neutral-800 shadow-2xl overflow-hidden font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded border border-[#3c3c3c] bg-[#252526] shadow-2xl overflow-hidden font-sans">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800 bg-neutral-950">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2d2d2d] bg-[#181818]">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded border border-neutral-800 bg-neutral-900 flex items-center justify-center text-neutral-300">
+            <div className="h-8 w-8 rounded border border-[#333333] bg-[#252526] flex items-center justify-center text-[#007acc]">
               <Terminal className="h-4 w-4" />
             </div>
             <div>
@@ -57,22 +57,22 @@ export const DeploymentLogModal: React.FC<DeploymentLogModalProps> = ({
                   Deployment #{deploymentId} : {deployment?.actionName}
                 </h3>
                 {deployment?.status === 'SUCCESS' && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white text-black font-semibold">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-[#16825d]/50 bg-[#16825d]/20 text-[#4ec9b0] font-medium">
                     SUCCESS (exit 0)
                   </span>
                 )}
                 {deployment?.status === 'FAILED' && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded border border-neutral-700 text-neutral-400">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-[#f14c4c]/50 bg-[#f14c4c]/20 text-[#f14c4c] font-medium">
                     FAILED (exit {deployment?.exitCode ?? 1})
                   </span>
                 )}
                 {deployment?.status === 'RUNNING' && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded border border-neutral-700 text-white animate-pulse">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-[#007acc] bg-[#007acc]/20 text-[#75beff] animate-pulse">
                     RUNNING
                   </span>
                 )}
               </div>
-              <p className="text-xs text-neutral-500 font-mono mt-0.5">
+              <p className="text-xs text-[#858585] font-mono mt-0.5">
                 App: {deployment?.app?.name || 'Loading...'}
               </p>
             </div>
@@ -82,13 +82,13 @@ export const DeploymentLogModal: React.FC<DeploymentLogModalProps> = ({
             <button
               onClick={fetchLog}
               title="Refresh log stream"
-              className="p-1.5 rounded border border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-900 transition"
+              className="p-1.5 rounded border border-[#333333] bg-[#252526] text-[#858585] hover:text-white hover:bg-[#333333] transition"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded hover:bg-neutral-900 text-neutral-400 hover:text-white transition"
+              className="p-1.5 rounded hover:bg-[#333333] text-[#858585] hover:text-white transition"
             >
               <X className="h-4 w-4" />
             </button>
@@ -97,22 +97,22 @@ export const DeploymentLogModal: React.FC<DeploymentLogModalProps> = ({
 
         {/* Metadata bar */}
         {deployment && (
-          <div className="px-6 py-2 bg-neutral-950 border-b border-neutral-800/80 flex flex-wrap items-center gap-4 text-xs font-mono text-neutral-400">
+          <div className="px-6 py-2 bg-[#1f1f1f] border-b border-[#2d2d2d] flex flex-wrap items-center gap-4 text-xs font-mono text-[#858585]">
             <div className="flex items-center gap-1.5">
-              <Clock className="h-3 w-3 text-neutral-600" />
-              <span>{deployment.durationMs ? `${(deployment.durationMs / 1000).toFixed(2)}s` : 'in progress'}</span>
+              <Clock className="h-3.5 w-3.5 text-[#007acc]" />
+              <span className="text-[#cccccc]">{deployment.durationMs ? `${(deployment.durationMs / 1000).toFixed(2)}s` : 'in progress'}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Globe className="h-3 w-3 text-neutral-600" />
-              <span>Trigger: {deployment.triggeredBy}</span>
+              <Globe className="h-3.5 w-3.5 text-[#007acc]" />
+              <span>Trigger: <strong className="text-[#cccccc]">{deployment.triggeredBy}</strong></span>
             </div>
             {deployment.triggerIp && (
               <div className="flex items-center gap-1.5">
-                <Shield className="h-3 w-3 text-neutral-600" />
-                <span>IP: {deployment.triggerIp}</span>
+                <Shield className="h-3.5 w-3.5 text-[#007acc]" />
+                <span>IP: <strong className="text-[#cccccc]">{deployment.triggerIp}</strong></span>
               </div>
             )}
-            <div className="ml-auto text-neutral-600">
+            <div className="ml-auto text-[#858585]">
               {new Date(deployment.createdAt).toLocaleString()}
             </div>
           </div>
@@ -120,14 +120,14 @@ export const DeploymentLogModal: React.FC<DeploymentLogModalProps> = ({
 
         {/* Command Executed */}
         {deployment && (
-          <div className="px-6 py-2 bg-black border-b border-neutral-900 font-mono text-xs flex items-center gap-2 text-neutral-300">
-            <span className="text-neutral-500 select-none">$</span>
+          <div className="px-6 py-2 bg-[#181818] border-b border-[#2d2d2d] font-mono text-xs flex items-center gap-2 text-[#75beff]">
+            <span className="text-[#858585] select-none">$</span>
             <span className="overflow-x-auto whitespace-pre">{deployment.command}</span>
           </div>
         )}
 
         {/* Terminal Output with CodeEditor */}
-        <div className="flex-1 p-4 bg-black overflow-hidden flex flex-col">
+        <div className="flex-1 p-4 bg-[#1e1e1e] overflow-hidden flex flex-col">
           <CodeEditor
             value={combinedOutput || (loading ? 'Loading stream...' : 'No output captured.')}
             readOnly={true}

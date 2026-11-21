@@ -177,46 +177,46 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
   const shortcutUrl = `${host}/${app.secret}/deploy`;
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-lg bg-black border border-neutral-800 shadow-2xl overflow-hidden font-sans">
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded border border-[#3c3c3c] bg-[#252526] shadow-2xl overflow-hidden font-sans">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-neutral-800 flex items-start justify-between gap-4 bg-neutral-950">
+        <div className="px-6 py-4 border-b border-[#2d2d2d] flex items-start justify-between gap-4 bg-[#181818]">
           <div>
             <div className="flex items-center gap-2.5">
               <h2 className="text-base font-semibold text-white">{app.name}</h2>
-              <span className="text-xs font-mono px-1.5 py-0.5 rounded border border-neutral-800 text-neutral-400">
+              <span className="text-xs font-mono px-1.5 py-0.5 rounded border border-[#3c3c3c] bg-[#1e1e1e] text-[#858585]">
                 {app.slug}
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white text-black font-semibold">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-[#16825d]/50 bg-[#16825d]/20 text-[#4ec9b0] font-medium">
                 ACTIVE
               </span>
             </div>
-            <p className="text-xs text-neutral-500 mt-1 flex items-center gap-2 font-mono">
-              <Folder className="h-3 w-3 text-neutral-600" />
-              <span>{app.cwd}</span>
-              {app.branch && <span className="text-neutral-600">({app.branch})</span>}
+            <p className="text-xs text-[#858585] mt-1 flex items-center gap-2 font-mono">
+              <Folder className="h-3.5 w-3.5 text-[#007acc]" />
+              <span className="text-[#cccccc]">{app.cwd}</span>
+              {app.branch && <span className="text-[#858585]">({app.branch})</span>}
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-md hover:bg-neutral-900 text-neutral-400 hover:text-white transition"
+            className="p-1.5 rounded hover:bg-[#333333] text-[#858585] hover:text-white transition"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Secret Token Banner */}
-        <div className="px-6 py-2.5 bg-neutral-950 border-b border-neutral-800/80 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="px-6 py-2.5 bg-[#1f1f1f] border-b border-[#2d2d2d] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
           <div className="flex items-center gap-2">
-            <KeyRound className="h-3.5 w-3.5 text-neutral-500" />
-            <span className="text-neutral-400">SECRET:</span>
-            <span className="text-white bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
+            <KeyRound className="h-3.5 w-3.5 text-[#007acc]" />
+            <span className="text-[#858585]">SECRET:</span>
+            <span className="text-white bg-[#181818] px-2 py-0.5 rounded border border-[#333333]">
               {showSecret ? app.secret : `••••••••••••••••••••${app.secret.slice(-6)}`}
             </span>
             <button
               onClick={() => setShowSecret(!showSecret)}
-              className="text-neutral-500 hover:text-white underline ml-1"
+              className="text-[#75beff] hover:underline ml-1"
             >
               {showSecret ? 'hide' : 'reveal'}
             </button>
@@ -225,16 +225,16 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={handleCopySecret}
-              className="flex items-center gap-1 px-2.5 py-1 rounded border border-neutral-800 bg-neutral-900 hover:bg-white hover:text-black hover:border-white text-neutral-300 transition"
+              className="flex items-center gap-1 px-2.5 py-1 rounded border border-[#45494e] bg-[#3a3d41] hover:bg-[#4f5358] text-white transition select-none"
             >
-              {copiedSecret ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copiedSecret ? <Check className="h-3 w-3 text-[#4ec9b0]" /> : <Copy className="h-3 w-3" />}
               <span>{copiedSecret ? 'Copied' : 'Copy Token'}</span>
             </button>
             <button
               onClick={handleRegenerateSecret}
               disabled={isRegenerating}
               title="Rotate Secret Token"
-              className="flex items-center gap-1 px-2 py-1 rounded border border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-900 transition"
+              className="flex items-center gap-1 px-2 py-1 rounded border border-[#333333] bg-[#252526] text-[#858585] hover:text-white hover:bg-[#333333] transition"
             >
               <RefreshCw className={`h-3 w-3 ${isRegenerating ? 'animate-spin' : ''}`} />
               <span>Rotate</span>
@@ -243,13 +243,13 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
         </div>
 
         {/* Navigation Tabs */}
-        <div className="px-6 border-b border-neutral-800 bg-black flex gap-5 text-xs font-mono">
+        <div className="px-6 border-b border-[#2d2d2d] bg-[#181818] flex gap-5 text-xs font-mono">
           <button
             onClick={() => setActiveTab('actions')}
             className={`py-2.5 font-medium border-b-2 transition ${
               activeTab === 'actions'
-                ? 'border-white text-white'
-                : 'border-transparent text-neutral-500 hover:text-neutral-300'
+                ? 'border-[#007acc] text-white'
+                : 'border-transparent text-[#858585] hover:text-[#cccccc]'
             }`}
           >
             COMMANDS ({app.actions.length})
@@ -258,8 +258,8 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             onClick={() => setActiveTab('webhook')}
             className={`py-2.5 font-medium border-b-2 transition flex items-center gap-1.5 ${
               activeTab === 'webhook'
-                ? 'border-white text-white'
-                : 'border-transparent text-neutral-500 hover:text-neutral-300'
+                ? 'border-[#007acc] text-white'
+                : 'border-transparent text-[#858585] hover:text-[#cccccc]'
             }`}
           >
             <Code2 className="h-3.5 w-3.5" />
@@ -269,8 +269,8 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             onClick={() => setActiveTab('history')}
             className={`py-2.5 font-medium border-b-2 transition flex items-center gap-1.5 ${
               activeTab === 'history'
-                ? 'border-white text-white'
-                : 'border-transparent text-neutral-500 hover:text-neutral-300'
+                ? 'border-[#007acc] text-white'
+                : 'border-transparent text-[#858585] hover:text-[#cccccc]'
             }`}
           >
             <History className="h-3.5 w-3.5" />
@@ -280,8 +280,8 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
             onClick={() => setActiveTab('settings')}
             className={`py-2.5 font-medium border-b-2 transition ${
               activeTab === 'settings'
-                ? 'border-white text-white'
-                : 'border-transparent text-neutral-500 hover:text-neutral-300'
+                ? 'border-[#007acc] text-white'
+                : 'border-transparent text-[#858585] hover:text-[#cccccc]'
             }`}
           >
             SETTINGS
@@ -289,7 +289,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
         </div>
 
         {/* Tab Body */}
-        <div className="flex-1 p-6 overflow-y-auto max-h-[62vh]">
+        <div className="flex-1 p-6 overflow-y-auto max-h-[62vh] bg-[#252526]">
           {/* TAB 1: Configured Actions with CodeEditor */}
           {activeTab === 'actions' && (
             <div className="space-y-4">
@@ -298,13 +298,13 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                   <h3 className="text-xs font-semibold text-white uppercase tracking-wider font-mono">
                     Whitelisted Commands
                   </h3>
-                  <p className="text-xs text-neutral-500 mt-0.5">
+                  <p className="text-xs text-[#858585] mt-0.5">
                     Pre-configured scripts executed when an action webhook is triggered.
                   </p>
                 </div>
                 <button
                   onClick={() => setShowAddAction(!showAddAction)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded bg-white hover:bg-neutral-200 text-black text-xs font-medium transition"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded bg-[#007acc] hover:bg-[#0098ff] text-white text-xs font-medium transition shadow-sm"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Add Command</span>
@@ -315,14 +315,14 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
               {showAddAction && (
                 <form
                   onSubmit={handleAddAction}
-                  className="p-4 rounded-lg bg-neutral-950 border border-neutral-800 space-y-3 animate-in fade-in"
+                  className="p-4 rounded bg-[#1e1e1e] border border-[#333333] space-y-3 animate-in fade-in"
                 >
                   <div className="text-xs font-mono uppercase tracking-wider text-white font-medium">
                     New Action Definition
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] text-neutral-400 block mb-1 font-mono">
+                      <label className="text-[11px] text-[#858585] block mb-1 font-mono">
                         ACTION NAME (e.g. deploy, status, restart) *
                       </label>
                       <input
@@ -331,11 +331,11 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                         placeholder="e.g. deploy"
                         value={actionName}
                         onChange={(e) => setActionName(e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded bg-black border border-neutral-800 text-white text-xs font-mono focus:border-neutral-500 focus:outline-none"
+                        className="w-full px-2.5 py-1.5 rounded bg-[#252526] border border-[#3c3c3c] text-white text-xs font-mono focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-neutral-400 block mb-1 font-mono">
+                      <label className="text-[11px] text-[#858585] block mb-1 font-mono">
                         TIMEOUT (SECONDS)
                       </label>
                       <input
@@ -343,14 +343,14 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                         placeholder="300"
                         value={actionTimeout}
                         onChange={(e) => setActionTimeout(e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded bg-black border border-neutral-800 text-white text-xs font-mono focus:border-neutral-500 focus:outline-none"
+                        className="w-full px-2.5 py-1.5 rounded bg-[#252526] border border-[#3c3c3c] text-white text-xs font-mono focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-[11px] text-neutral-400 block mb-1 font-mono">
-                      SHELL SCRIPT (Code Editor) *
+                    <label className="text-[11px] text-[#858585] block mb-1 font-mono">
+                      SHELL SCRIPT (VS Code Editor) *
                     </label>
                     <CodeEditor
                       value={actionCmd}
@@ -363,7 +363,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="text-[11px] text-neutral-400 block mb-1 font-mono">
+                    <label className="text-[11px] text-[#858585] block mb-1 font-mono">
                       DESCRIPTION (OPTIONAL)
                     </label>
                     <input
@@ -371,7 +371,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                       placeholder="e.g. Pull latest commit, rebuild and restart daemon"
                       value={actionDesc}
                       onChange={(e) => setActionDesc(e.target.value)}
-                      className="w-full px-2.5 py-1.5 rounded bg-black border border-neutral-800 text-white text-xs focus:border-neutral-500 focus:outline-none"
+                      className="w-full px-2.5 py-1.5 rounded bg-[#252526] border border-[#3c3c3c] text-white text-xs focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] focus:outline-none"
                     />
                   </div>
 
@@ -379,14 +379,14 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setShowAddAction(false)}
-                      className="px-3 py-1.5 rounded border border-neutral-800 bg-neutral-900 text-xs text-neutral-400 hover:text-white transition"
+                      className="px-3 py-1.5 rounded border border-[#3c3c3c] bg-[#252526] text-xs text-[#858585] hover:text-white transition"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSavingAction}
-                      className="px-3.5 py-1.5 rounded bg-white hover:bg-neutral-200 text-xs font-medium text-black transition disabled:opacity-50"
+                      className="px-3.5 py-1.5 rounded bg-[#007acc] hover:bg-[#0098ff] text-xs font-medium text-white transition disabled:opacity-50"
                     >
                       {isSavingAction ? 'Saving...' : 'Save Action'}
                     </button>
@@ -402,18 +402,18 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                   return (
                     <div
                       key={act.id}
-                      className="p-3.5 rounded-lg bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition space-y-2.5"
+                      className="p-3.5 rounded bg-[#1e1e1e] border border-[#333333] hover:border-[#3c3c3c] transition space-y-2.5"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-semibold text-sm text-white">
                             {act.name}
                           </span>
-                          <span className="text-[10px] text-neutral-500 font-mono px-1.5 py-0.2 rounded border border-neutral-800">
+                          <span className="text-[10px] text-[#858585] font-mono px-1.5 py-0.2 rounded border border-[#3c3c3c] bg-[#252526]">
                             timeout: {act.timeoutSec}s
                           </span>
                           {act.description && (
-                            <span className="text-xs text-neutral-500 truncate max-w-sm">
+                            <span className="text-xs text-[#858585] truncate max-w-sm">
                               {act.description}
                             </span>
                           )}
@@ -425,14 +425,14 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                               <button
                                 onClick={() => handleSaveEditAction(act.id)}
                                 disabled={isUpdatingAction}
-                                className="flex items-center gap-1 px-2.5 py-1 rounded bg-white text-black text-xs font-medium hover:bg-neutral-200 transition"
+                                className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#007acc] text-white text-xs font-medium hover:bg-[#0098ff] transition"
                               >
                                 <Save className="h-3 w-3" />
                                 <span>Save</span>
                               </button>
                               <button
                                 onClick={() => setEditingActionId(null)}
-                                className="px-2 py-1 rounded border border-neutral-800 text-xs text-neutral-400 hover:text-white transition"
+                                className="px-2 py-1 rounded border border-[#3c3c3c] text-xs text-[#858585] hover:text-white transition"
                               >
                                 Cancel
                               </button>
@@ -442,14 +442,14 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                               <button
                                 onClick={() => handleStartEditAction(act)}
                                 title="Edit command in code editor"
-                                className="p-1.5 rounded border border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-900 transition"
+                                className="p-1.5 rounded border border-[#3c3c3c] bg-[#252526] text-[#858585] hover:text-white hover:bg-[#333333] transition"
                               >
                                 <Edit2 className="h-3.5 w-3.5" />
                               </button>
                               <button
                                 onClick={() => handleTrigger(act.name)}
                                 disabled={triggeringAction !== null}
-                                className="flex items-center gap-1 px-3 py-1 rounded border border-neutral-700 bg-neutral-900 hover:bg-white hover:text-black hover:border-white text-xs font-mono text-neutral-200 transition disabled:opacity-50"
+                                className="flex items-center gap-1 px-3 py-1 rounded bg-[#007acc] hover:bg-[#0098ff] text-xs font-mono text-white transition disabled:opacity-50 shadow-sm"
                               >
                                 {triggeringAction === act.name ? (
                                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -461,7 +461,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                               <button
                                 onClick={() => handleDeleteAction(act.id, act.name)}
                                 title="Delete action"
-                                className="p-1.5 rounded border border-neutral-800 text-neutral-600 hover:text-white hover:bg-neutral-900 transition"
+                                className="p-1.5 rounded border border-[#3c3c3c] bg-[#252526] text-[#858585] hover:text-[#f14c4c] hover:bg-[#333333] transition"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </button>
@@ -481,12 +481,12 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                             minHeight="100px"
                           />
                           <div className="flex items-center gap-2">
-                            <label className="text-[11px] font-mono text-neutral-500">Timeout (s):</label>
+                            <label className="text-[11px] font-mono text-[#858585]">Timeout (s):</label>
                             <input
                               type="number"
                               value={editActionTimeout}
                               onChange={(e) => setEditActionTimeout(e.target.value)}
-                              className="w-24 px-2 py-0.5 rounded bg-black border border-neutral-800 text-white text-xs font-mono focus:outline-none"
+                              className="w-24 px-2 py-0.5 rounded bg-[#252526] border border-[#3c3c3c] text-white text-xs font-mono focus:border-[#007acc] focus:outline-none"
                             />
                           </div>
                         </div>
@@ -501,15 +501,15 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                         />
                       )}
 
-                      <div className="text-[11px] font-mono text-neutral-600">
-                        Webhook: <code className="text-neutral-400">{host}/api/webhook/{app.secret.slice(0, 10)}.../{act.name}</code>
+                      <div className="text-[11px] font-mono text-[#858585]">
+                        Webhook: <code className="text-[#75beff]">{host}/api/webhook/{app.secret.slice(0, 10)}.../{act.name}</code>
                       </div>
                     </div>
                   );
                 })}
 
                 {app.actions.length === 0 && (
-                  <div className="p-6 text-center border border-dashed border-neutral-800 rounded-lg text-neutral-600 text-xs font-mono">
+                  <div className="p-6 text-center border border-dashed border-[#333333] rounded text-[#858585] text-xs font-mono">
                     No actions configured. Click "Add Command" to define a whitelisted deployment script.
                   </div>
                 )}
@@ -520,7 +520,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
           {/* TAB 2: Webhook Setup Guide */}
           {activeTab === 'webhook' && (
             <div className="space-y-5">
-              <div className="p-3.5 rounded-lg border border-neutral-800 bg-neutral-950 text-xs text-neutral-400 space-y-1">
+              <div className="p-3.5 rounded border border-[#007acc]/40 bg-[#0e639c]/15 text-xs text-[#cccccc] space-y-1">
                 <div className="text-white font-medium">Safe Webhook Endpoint</div>
                 <p>
                   Instead of giving external runners SSH access with Appleboy (where malicious scripts can be injected in YAML),
@@ -530,30 +530,30 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
 
               {/* Endpoints */}
               <div className="space-y-2">
-                <div className="text-xs font-mono text-neutral-500 uppercase">1. Webhook Endpoints</div>
-                <div className="p-3 rounded-lg border border-neutral-800 bg-neutral-950 space-y-2 font-mono text-xs">
-                  <div className="flex items-center justify-between gap-2 bg-black p-2 rounded border border-neutral-800 text-white">
-                    <span className="truncate">{webhookUrl}</span>
+                <div className="text-xs font-mono text-[#858585] uppercase">1. Webhook Endpoints</div>
+                <div className="p-3 rounded border border-[#333333] bg-[#1e1e1e] space-y-2 font-mono text-xs">
+                  <div className="flex items-center justify-between gap-2 bg-[#252526] p-2 rounded border border-[#333333] text-white">
+                    <span className="truncate text-[#75beff]">{webhookUrl}</span>
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(webhookUrl);
                         setCopiedWebhook(true);
                         setTimeout(() => setCopiedWebhook(false), 2000);
                       }}
-                      className="text-neutral-400 hover:text-white text-xs shrink-0"
+                      className="text-[#858585] hover:text-white text-xs shrink-0"
                     >
                       {copiedWebhook ? 'Copied' : 'Copy'}
                     </button>
                   </div>
-                  <div className="flex items-center justify-between gap-2 bg-black p-2 rounded border border-neutral-800 text-white">
-                    <span className="truncate">{shortcutUrl}</span>
+                  <div className="flex items-center justify-between gap-2 bg-[#252526] p-2 rounded border border-[#333333] text-white">
+                    <span className="truncate text-[#75beff]">{shortcutUrl}</span>
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(shortcutUrl);
                         setCopiedWebhook(true);
                         setTimeout(() => setCopiedWebhook(false), 2000);
                       }}
-                      className="text-neutral-400 hover:text-white text-xs shrink-0"
+                      className="text-[#858585] hover:text-white text-xs shrink-0"
                     >
                       {copiedWebhook ? 'Copied' : 'Copy'}
                     </button>
@@ -564,7 +564,7 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
               {/* GitHub Actions Snippet using CodeEditor */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-neutral-500 uppercase">
+                  <span className="text-xs font-mono text-[#858585] uppercase">
                     2. GitHub Actions (.github/workflows/deploy.yml)
                   </span>
                 </div>
@@ -599,36 +599,36 @@ jobs:
                 <div
                   key={d.id}
                   onClick={() => onViewLogs(d.id)}
-                  className="p-3 rounded-lg border border-neutral-800 bg-neutral-950 hover:border-neutral-700 transition cursor-pointer flex items-center justify-between gap-4"
+                  className="p-3 rounded border border-[#333333] bg-[#1e1e1e] hover:border-[#007acc]/60 hover:bg-[#2a2d2e] transition cursor-pointer flex items-center justify-between gap-4"
                 >
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-white">#{d.id}</span>
-                      <span className="text-neutral-300 font-semibold">{d.actionName}</span>
+                      <span className="text-[#75beff] font-semibold">{d.actionName}</span>
                       {d.status === 'SUCCESS' && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-white text-black font-semibold">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded border border-[#16825d]/50 bg-[#16825d]/20 text-[#4ec9b0] font-medium">
                           PASSED (exit 0)
                         </span>
                       )}
                       {d.status === 'FAILED' && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded border border-neutral-700 text-neutral-400">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded border border-[#f14c4c]/50 bg-[#f14c4c]/20 text-[#f14c4c] font-medium">
                           FAILED (exit {d.exitCode})
                         </span>
                       )}
                       {d.status === 'RUNNING' && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded border border-neutral-700 text-white animate-pulse">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded border border-[#007acc] bg-[#007acc]/20 text-[#75beff] animate-pulse">
                           RUNNING
                         </span>
                       )}
                     </div>
-                    <div className="text-[11px] text-neutral-500 flex items-center gap-3">
+                    <div className="text-[11px] text-[#858585] flex items-center gap-3">
                       <span>{new Date(d.createdAt).toLocaleTimeString()}</span>
                       <span>by {d.triggeredBy}</span>
                       {d.durationMs && <span>{(d.durationMs / 1000).toFixed(1)}s</span>}
                     </div>
                   </div>
 
-                  <button className="flex items-center gap-1 text-neutral-400 hover:text-white transition">
+                  <button className="flex items-center gap-1 text-[#75beff] hover:underline transition">
                     <Terminal className="h-3.5 w-3.5" />
                     <span>view log →</span>
                   </button>
@@ -636,7 +636,7 @@ jobs:
               ))}
 
               {(!app.deployments || app.deployments.length === 0) && (
-                <div className="p-6 text-center text-neutral-600 text-xs border border-dashed border-neutral-800 rounded-lg">
+                <div className="p-6 text-center text-[#858585] text-xs border border-dashed border-[#333333] rounded">
                   No deployment history recorded yet.
                 </div>
               )}
@@ -647,7 +647,7 @@ jobs:
           {activeTab === 'settings' && (
             <form onSubmit={handleSaveSettings} className="space-y-4 max-w-2xl">
               <div>
-                <label className="text-[11px] text-neutral-400 block mb-1 font-mono">
+                <label className="text-[11px] text-[#858585] block mb-1 font-mono">
                   VPS WORKING DIRECTORY (CWD) *
                 </label>
                 <input
@@ -655,24 +655,24 @@ jobs:
                   required
                   value={editCwd}
                   onChange={(e) => setEditCwd(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded bg-black border border-neutral-800 text-white text-xs font-mono focus:border-neutral-500 focus:outline-none"
+                  className="w-full px-2.5 py-1.5 rounded bg-[#1e1e1e] border border-[#3c3c3c] text-white text-xs font-mono focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-neutral-400 block mb-1 font-mono">
+                <label className="text-[11px] text-[#858585] block mb-1 font-mono">
                   TARGET GIT BRANCH
                 </label>
                 <input
                   type="text"
                   value={editBranch}
                   onChange={(e) => setEditBranch(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded bg-black border border-neutral-800 text-white text-xs font-mono focus:border-neutral-500 focus:outline-none"
+                  className="w-full px-2.5 py-1.5 rounded bg-[#1e1e1e] border border-[#3c3c3c] text-white text-xs font-mono focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-neutral-400 block mb-1 font-mono">
+                <label className="text-[11px] text-[#858585] block mb-1 font-mono">
                   ENVIRONMENT VARIABLES (JSON Code Editor)
                 </label>
                 <CodeEditor
@@ -688,7 +688,7 @@ jobs:
                 <button
                   type="submit"
                   disabled={isSavingSettings}
-                  className="px-4 py-1.5 rounded bg-white hover:bg-neutral-200 text-black text-xs font-medium transition disabled:opacity-50"
+                  className="px-4 py-1.5 rounded bg-[#007acc] hover:bg-[#0098ff] text-white text-xs font-medium transition disabled:opacity-50 shadow-sm"
                 >
                   {isSavingSettings ? 'Saving...' : 'Save Configuration'}
                 </button>
