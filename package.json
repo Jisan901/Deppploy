@@ -30,8 +30,9 @@
   },
   "scripts": {
     "build": "tsdown",
-    "build:client": "cd client && npm run build",
+    "build:client": "cd client && npm install --silent && npm run build",
     "build:all": "npm run build:client && npm run build",
+    "prepare": "npm run build:all",
     "prepack": "npm run build:all",
     "composer:deploy": "prisma deploy",
     "composer:dev": "prisma dev",
