@@ -1,7 +1,29 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { ServeStaticModule } from "@nestjs/serve-static";
+import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+function getClientDistPath(): string {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const candidateInPkg = path.resolve(__dirname, "..", "client", "dist");
+    if (fs.existsSync(candidateInPkg)) {
+      return candidateInPkg;
+    }
+  } catch {
+    // ignore
+  }
+
+  const candidateInCwd = path.join(process.cwd(), "client", "dist");
+  if (fs.existsSync(candidateInCwd)) {
+    return candidateInCwd;
+  }
+
+  return path.join(process.cwd(), "client", "dist");
+}
 
 import { AppController } from "./app.controller.ts";
 import { PrismaService } from "./prisma.service.ts";
@@ -27,7 +49,7 @@ import { WebhookController } from "./webhook/webhook.controller.ts";
       signOptions: { expiresIn: "7d" },
     }),
     ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), "client", "dist"),
+      rootPath: getClientDistPath(),
       serveRoot: "/admin",
       serveStaticOptions: {
         index: "index.html",

@@ -1,8 +1,30 @@
 {
   "name": "deppploy",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Secure, self-hosted CI/CD webhook deployment server with minimal VS Code Dark admin UI",
+  "bin": {
+    "deppploy": "./bin/deppploy.js"
+  },
   "packageManager": "npm@11.15.0",
   "type": "module",
+  "keywords": [
+    "cicd",
+    "deployment",
+    "webhook",
+    "vps",
+    "server",
+    "git",
+    "devops",
+    "vscode"
+  ],
+  "author": "Jisan",
+  "license": "MIT",
+  "files": [
+    "bin",
+    "dist",
+    "client/dist",
+    "README.md"
+  ],
   "engines": {
     "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
   },
@@ -10,6 +32,7 @@
     "build": "tsdown",
     "build:client": "cd client && npm run build",
     "build:all": "npm run build:client && npm run build",
+    "prepack": "npm run build:all",
     "composer:deploy": "prisma deploy",
     "composer:dev": "prisma dev",
     "contract:emit": "prisma contract emit",
@@ -39,6 +62,7 @@
     "@prisma/orm-postgres": "8.0.0-rc.23",
     "alchemy": "2.0.0-beta.84",
     "bcryptjs": "^3.0.3",
+    "commander": "^15.1.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
