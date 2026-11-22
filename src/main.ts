@@ -16,12 +16,13 @@ async function bootstrap() {
     credentials: true,
   });
 
+  const host = (process.env.HOST ?? "127.0.0.1").trim();
   const rawPort = (process.env.PORT ?? "").trim();
   const parsedPort = rawPort.length > 0 ? Number(rawPort) : Number.NaN;
   const port =
-    Number.isFinite(parsedPort) && parsedPort >= 0 && parsedPort <= 65535 ? parsedPort : 3000;
-  await app.listen(port);
-  console.log(`Deppploy Server running at http://localhost:${port}`);
+    Number.isFinite(parsedPort) && parsedPort >= 0 && parsedPort <= 65535 ? parsedPort : 4444;
+  await app.listen(port, host);
+  console.log(`Deppploy Server running at http://${host}:${port}`);
 }
 
 bootstrap().catch((error) => {
