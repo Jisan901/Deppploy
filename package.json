@@ -19,6 +19,14 @@
   ],
   "author": "Jisan",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jisan901/Deppploy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Jisan901/Deppploy/issues"
+  },
+  "homepage": "https://github.com/Jisan901/Deppploy#readme",
   "files": [
     "bin",
     "dist",

@@ -85,7 +85,7 @@ You can install Deppploy globally via Git + npm, from source, or via the npm reg
 No waiting for registry releases — install directly from the GitHub repository into your global environment:
 
 ```bash
-npm install -g git+https://github.com/Jisan-mia/Deppploy.git
+npm install -g git+https://github.com/Jisan901/Deppploy.git
 ```
 
 Verify installation:
@@ -100,7 +100,7 @@ deppploy --help
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/Jisan-mia/Deppploy.git
+git clone https://github.com/Jisan901/Deppploy.git
 cd Deppploy
 
 # 2. Install dependencies & build bundles (React UI + NestJS server)
@@ -315,7 +315,7 @@ Contributions, issues, and feature requests are welcome!
 
 ```bash
 # 1. Fork repository & clone
-git clone https://github.com/Jisan-mia/Deppploy.git
+git clone https://github.com/Jisan901/Deppploy.git
 cd Deppploy
 
 # 2. Install dependencies
